@@ -245,8 +245,10 @@ section:has(.dec[data-spot="bottom"]){padding-bottom:215px}
 .ill-labels span{font-family:'Great Vibes','Parisienne','Kanit',cursive;
      font-size:1.5rem;line-height:1.3;color:var(--gold);letter-spacing:.02em}
 .ill-labels span:empty{display:none}
-.form-warn{font-size:.64rem;line-height:1.75;color:#A0805A;margin-top:7px;
-     padding-left:10px;border-left:2px solid rgba(201,160,99,.45)}
+.form-warn{font-size:.55rem;line-height:1.5;color:#A0805A;margin-top:7px;
+     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#yesExtra{display:grid;gap:17px;margin-bottom:14px}   /* เว้นก่อนช่องอวยพร */
+#yesExtra[hidden]{display:none}
 /* เผยตัวด้วยความทึบล้วน — พอถึง 1 แล้วชั้นซ้อนหายไป โหมดผสมจึงถึงพื้นการ์ด */
 .reveal.rv-fade{opacity:0;transform:none;filter:none}
 .reveal.rv-fade.in{opacity:1;transform:none;filter:none;
@@ -591,15 +593,16 @@ html.embed .folio{display:none}
           <input id="gname" name="gname" required autocomplete="name"></div>
         <div><label>จะไปร่วมงานไหม · ATTENDING</label>
           <div class="seg seg-att" role="group">
-            <button type="button" data-att="yes" aria-pressed="true">ไปแน่นอน</button>
+            <button type="button" data-att="yes" aria-pressed="false">ไปแน่นอน</button>
             <button type="button" data-att="no" aria-pressed="false">ไม่สะดวก</button>
           </div></div>
+        <div id="yesExtra" hidden>
         <div><label>จำนวนผู้ร่วมงาน · GUESTS</label>
           <div class="seg seg-cnt" role="group">
             <button type="button" data-cnt="1" aria-pressed="true">มา 1 ท่าน</button>
             <button type="button" data-cnt="2" aria-pressed="false">มา 2 ท่าน</button>
           </div>
-          <p class="form-warn">ขออนุญาตให้นำแขกเพิ่มได้ไม่เกิน 1 ท่าน และแขกที่ไม่มีรายชื่อลงทะเบียนจะไม่มีโต๊ะที่นั่งภายในงาน</p></div>
+          <p class="form-warn">นำแขกเพิ่มได้ไม่เกิน 1 ท่าน · แขกที่ไม่มีรายชื่อจะไม่มีโต๊ะที่นั่ง</p></div>
         <div id="g2wrap" hidden><label for="gname2">ชื่อ-นามสกุล ผู้ติดตาม (ท่านที่ 2)</label>
           <input id="gname2" name="gname2" autocomplete="off"
                  placeholder="ระบุชื่อจริงเพื่อจัดโต๊ะที่นั่ง"></div>
@@ -610,6 +613,7 @@ html.embed .folio{display:none}
           </div></div>
         <div><label for="gdiet">อาหารที่ไม่ทาน / แพ้อาหาร (ถ้ามี)</label>
           <input id="gdiet" name="gdiet" placeholder="เช่น ไม่ทานหมู · แพ้กุ้ง · มังสวิรัติ"></div>
+        </div>
         <div><label for="gmsg">คำอวยพร · A LINE FOR CHAPTER TWO</label>
           <textarea id="gmsg" name="gmsg" rows="3"></textarea></div>
         <button class="btn solid" type="submit" id="sendBtn" style="margin-top:6px">SEND MY REPLY</button>
@@ -954,7 +958,7 @@ html.embed .folio{display:none}
   }
 
   /* ── ตอบรับ (RSVP) ────────────────────────────────────────────── */
-  var att = 'yes', cnt = '1', food = 'คอร์ส';
+  var att = '', cnt = '1', food = 'คอร์ส';   /* ยังไม่เลือก = ไม่โชว์ช่องเพิ่ม */
   function segBind(sel, fn) {
     var btns = document.querySelectorAll(sel + ' button');
     btns.forEach(function (b) {
@@ -966,7 +970,11 @@ html.embed .folio{display:none}
       });
     });
   }
-  segBind('.seg-att', function (b) { att = b.dataset.att; });
+  segBind('.seg-att', function (b) {
+    att = b.dataset.att;
+    var ex = document.getElementById('yesExtra');
+    if (ex) ex.hidden = att !== 'yes';       /* จำนวน/อาหาร โผล่เฉพาะตอบ "ไปแน่นอน" */
+  });
   segBind('.seg-food', function (b) { food = b.dataset.food; });
   segBind('.seg-cnt', function (b) {
     cnt = b.dataset.cnt;
@@ -988,16 +996,19 @@ html.embed .folio{display:none}
     var name = val('gname');
     var name2 = cnt === '2' ? val('gname2') : '';
     if (name2) name += ' และ ' + name2;       /* สองชื่อลงช่องเดียว — จัดโต๊ะเห็นครบ */
-    var parts = ['อาหาร: ' + food];
-    var diet = val('gdiet');
-    if (diet) parts.push('งด/แพ้: ' + diet);
+    var parts = [];
+    if (att === 'yes') {                      /* ไม่ไป = ไม่ต้องบันทึกเรื่องอาหาร */
+      parts.push('อาหาร: ' + food);
+      var diet = val('gdiet');
+      if (diet) parts.push('งด/แพ้: ' + diet);
+    }
     var msg = val('gmsg');
     if (msg) parts.push(msg);
     return {
       cardId: CFG.cardId || '',
       name: name,
       going: att,
-      seats: cnt,
+      seats: att === 'yes' ? cnt : '0',
       note: parts.join(' · '),
       code: CODE,
       at: new Date().toISOString()
@@ -1022,6 +1033,7 @@ html.embed .folio{display:none}
     e.preventDefault();
     var d = data();
     if (!d.name) { note('กรุณากรอกชื่อ', 'err'); return; }
+    if (!att) { note('กรุณาเลือกว่าจะไปร่วมงานไหม', 'err'); return; }
     if (att === 'yes' && cnt === '2' && !val('gname2')) {
       note('เลือกมา 2 ท่าน — กรุณากรอกชื่อผู้ติดตามด้วย (แขกที่ไม่มีรายชื่อจะไม่มีโต๊ะที่นั่ง)', 'err');
       var f2 = document.getElementById('gname2'); if (f2) f2.focus();
