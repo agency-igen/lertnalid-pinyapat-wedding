@@ -1,0 +1,88 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<meta name="robots" content="noindex">
+<title>เช็คอินแขก · S&L</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Kanit',system-ui,sans-serif;font-weight:300;background:#F6F2EA;color:#2A1E16;
+     min-height:100svh;padding:18px 14px 60px}
+h1{font-size:1rem;font-weight:400;letter-spacing:.08em;text-align:center;color:#7A5C33}
+.sub{text-align:center;font-size:.7rem;color:#9A876B;margin-top:2px}
+.bar{display:flex;gap:8px;margin-top:14px}
+input{flex:1;font:inherit;font-size:.95rem;padding:11px 13px;border:1px solid #D8C9AF;
+      border-radius:10px;background:#FDFBF6;outline:none}
+button{font:inherit;font-size:.8rem;padding:11px 14px;border:1px solid #B08D57;border-radius:10px;
+       background:none;color:#7A5C33;cursor:pointer}
+.stats{display:flex;gap:8px;margin-top:12px}
+.st{flex:1;background:#FDFBF6;border:1px solid #E4D8C2;border-radius:10px;padding:9px;text-align:center}
+.st b{display:block;font-size:1.15rem;font-weight:500;color:#6B5637}
+.st span{font-size:.6rem;color:#9A876B}
+.row{display:flex;align-items:center;gap:10px;background:#FDFBF6;border:1px solid #E4D8C2;
+     border-radius:12px;padding:11px 13px;margin-top:8px}
+.row .nm{flex:1;min-width:0}
+.row .nm b{font-weight:400;font-size:.92rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .nm span{font-size:.64rem;color:#9A876B}
+.row .tag{font-size:.62rem;color:#5C8A5C;border:1px solid #BDD8BD;background:#F0F7F0;
+     padding:3px 8px;border-radius:20px;white-space:nowrap}
+.row button{padding:8px 13px;font-size:.72rem;border-radius:9px}
+#msg{position:fixed;left:14px;right:14px;bottom:14px;padding:13px;border-radius:12px;text-align:center;
+     font-size:.85rem;background:#2A1E16;color:#F6F2EA;opacity:0;transition:.3s;pointer-events:none}
+#msg.on{opacity:1}
+</style></head><body>
+<h1>จุดลงทะเบียนหน้างาน 🤍</h1>
+<p class="sub">Lertnalid & Pinyapat · 12.09.2026</p>
+<div class="bar"><input id="q" placeholder="พิมพ์ชื่อ หรือรหัส SL-…" autocomplete="off">
+<button id="scanBtn" hidden>📷 สแกน</button></div>
+<div class="stats"><div class="st"><b id="sTot">–</b><span>ตอบรับ (คน)</span></div>
+<div class="st"><b id="sIn">–</b><span>เช็คอินแล้ว</span></div>
+<div class="st"><b id="sLeft">–</b><span>ยังไม่มา</span></div></div>
+<div id="list"></div>
+<p id="msg"></p>
+<script>
+var EP='https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec';
+var KEY=localStorage.getItem('slkey')||'';
+while(!KEY){KEY=prompt('รหัสทีมงาน');if(KEY)localStorage.setItem('slkey',KEY);}
+var ROWS=[];
+function msg(t){var m=document.getElementById('msg');m.textContent=t;m.classList.add('on');
+  setTimeout(function(){m.classList.remove('on');},2200);}
+function load(){fetch(EP+'?action=list').then(r=>r.json()).then(function(j){
+  ROWS=(j.rows||[]).filter(r=>r.going==='yes');draw();});}
+function draw(){
+  var q=(document.getElementById('q').value||'').toLowerCase().trim();
+  var tot=0,inn=0;
+  ROWS.forEach(function(r){tot+=Number(r.seats)||1;if(r.checkin)inn+=Number(r.seats)||1;});
+  sTot.textContent=tot;sIn.textContent=inn;sLeft.textContent=tot-inn;
+  var el=document.getElementById('list');el.innerHTML='';
+  ROWS.filter(function(r){return !q||String(r.name).toLowerCase().includes(q)||
+      String(r.code).toLowerCase().includes(q);})
+    .forEach(function(r){
+      var d=document.createElement('div');d.className='row';
+      d.innerHTML='<div class="nm"><b>'+r.name+'</b><span>'+(r.seats||1)+' ท่าน · '+(r.code||'-')+
+        (r.food?' · '+r.food:'')+(r.diet?' · ⚠️ '+r.diet:'')+'</span></div>'+
+        (r.checkin?'<span class="tag">✓ '+r.checkin+'</span>':'<button>เช็คอิน</button>');
+      var b=d.querySelector('button');
+      if(b)b.onclick=function(){b.disabled=true;
+        fetch(EP+'?action=checkin&code='+encodeURIComponent(r.code)+'&key='+encodeURIComponent(KEY))
+        .then(x=>x.json()).then(function(j){
+          if(j.ok){r.checkin=j.at;msg('✓ '+r.name+' เช็คอินแล้ว');draw();}
+          else{b.disabled=false;msg(j.error==='key'?'รหัสทีมงานไม่ถูก':'ไม่พบรหัสนี้');
+               if(j.error==='key'){localStorage.removeItem('slkey');}}});};
+      el.appendChild(d);});}
+document.getElementById('q').addEventListener('input',draw);
+if('BarcodeDetector' in window){var sb=document.getElementById('scanBtn');sb.hidden=false;
+  sb.onclick=async function(){
+    var v=document.createElement('video');v.style.cssText='position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:99';
+    var st=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    v.srcObject=st;document.body.appendChild(v);await v.play();
+    var det=new BarcodeDetector({formats:['qr_code']});
+    var iv=setInterval(async function(){
+      var cs=await det.detect(v).catch(()=>[]);
+      if(cs.length){clearInterval(iv);st.getTracks().forEach(t=>t.stop());v.remove();
+        var code=(cs[0].rawValue||'').split('|')[0].trim();
+        document.getElementById('q').value=code;draw();
+        var r=ROWS.find(x=>x.code===code);
+        msg(r?('พบ: '+r.name):'ไม่พบรหัสในรายชื่อ');}
+    },400);
+    v.onclick=function(){clearInterval(iv);st.getTracks().forEach(t=>t.stop());v.remove();};};}
+load();setInterval(load,30000);
+</script></body></html>
