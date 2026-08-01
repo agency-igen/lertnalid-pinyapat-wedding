@@ -1244,12 +1244,15 @@ html.embed .folio{display:none}
      Safari อ่านอัลฟาได้เฉพาะ HEVC ใน .mov · ที่เหลือใช้ VP9 ใน .webm
      เช็กด้วยความสามารถจริง ไม่เดาจาก user agent                     */
   (function () {
-    var probe = document.createElement('video');
-    var useHevc = probe.canPlayType('video/quicktime') !== '' &&
-                  probe.canPlayType('video/webm; codecs="vp9"') === '';
+    /* iOS/Safari อ้างว่าเล่น WebM ได้ แต่เล่นแบบ "ไม่มีช่องโปร่งใส" — ตัวละคร
+       เลยขึ้นเป็นกล่องขาวทับการ์ด  เครื่อง Apple จึงต้องใช้ HEVC(.mov) เสมอ */
+    var ua = navigator.userAgent;
+    var isApple = /iPad|iPhone|iPod/.test(ua) ||
+                  (/Macintosh/.test(ua) && /Safari/.test(ua) && !/Chrome|Chromium|Edg/.test(ua)) ||
+                  (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
     document.querySelectorAll('.vid.alpha video').forEach(function (v) {
       var webm = v.dataset.webm, hevc = v.dataset.hevc;
-      v.src = (useHevc && hevc) ? hevc : (webm || hevc);
+      v.src = (isApple && hevc) ? hevc : (webm || hevc);
       v.load();
       v.play().catch(function () {});
     });
