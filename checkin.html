@@ -58,7 +58,7 @@ function draw(){
     .forEach(function(r){
       var d=document.createElement('div');d.className='row';
       d.innerHTML='<div class="nm"><b>'+r.name+'</b><span>'+(r.seats||1)+' ท่าน · '+(r.code||'-')+
-        (r.food?' · '+r.food:'')+(r.diet?' · ⚠️ '+r.diet:'')+'</span></div>'+
+        (r.table?' · โต๊ะ '+r.table:'')+(r.food?' · '+r.food:'')+(r.diet?' · ⚠️ '+r.diet:'')+'</span></div>'+
         (r.checkin?'<span class="tag">✓ '+r.checkin+'</span>':'<button>เช็คอิน</button>');
       var b=d.querySelector('button');
       if(b)b.onclick=function(){b.disabled=true;
@@ -78,7 +78,10 @@ if('BarcodeDetector' in window){var sb=document.getElementById('scanBtn');sb.hid
     var iv=setInterval(async function(){
       var cs=await det.detect(v).catch(()=>[]);
       if(cs.length){clearInterval(iv);st.getTracks().forEach(t=>t.stop());v.remove();
-        var code=(cs[0].rawValue||'').split('|')[0].trim();
+        var raw=(cs[0].rawValue||'').trim();
+        var code=raw.split('|')[0].trim();
+        var m=raw.match(/[?&]c=([^&\s]+)/);          /* QR แบบลิงก์หน้าที่นั่ง */
+        if(m)code=decodeURIComponent(m[1]);
         document.getElementById('q').value=code;draw();
         var r=ROWS.find(x=>x.code===code);
         msg(r?('พบ: '+r.name):'ไม่พบรหัสในรายชื่อ');}

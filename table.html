@@ -1,0 +1,76 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>ที่นั่งของฉัน · Lertnalid & Pinyapat</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Kanit',system-ui,sans-serif;font-weight:300;background:#F6F2EA;color:#2A1E16;
+     min-height:100svh;display:flex;flex-direction:column;align-items:center;
+     padding:34px 22px 50px;text-align:center}
+.mono{font-family:Georgia,serif;font-size:.68rem;letter-spacing:.42em;color:#A9854F;
+      text-transform:uppercase;text-indent:.42em}
+h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:1.5rem;margin-top:8px}
+.card{width:min(360px,100%);margin-top:26px;background:#FDFBF6;border:1px solid rgba(178,141,87,.4);
+      border-radius:18px;padding:30px 22px;box-shadow:0 16px 44px rgba(120,90,50,.12)}
+.lbl{font-size:.6rem;letter-spacing:.3em;color:#9A876B;text-transform:uppercase;text-indent:.3em}
+.name{font-size:1.12rem;font-weight:400;color:#5C4327;margin-top:6px}
+.tbl{font-family:Georgia,serif;font-size:3.6rem;color:#7A5C33;line-height:1.15;margin-top:16px}
+.tbl small{display:block;font-family:'Kanit';font-size:.66rem;color:#9A876B;letter-spacing:.24em;
+     text-transform:uppercase}
+.seats{font-size:.78rem;color:#8A7458;margin-top:12px}
+.wait{font-size:.82rem;line-height:1.9;color:#8A7458;margin-top:14px}
+.find{width:min(360px,100%);margin-top:22px}
+input{width:100%;font:inherit;font-size:.95rem;padding:12px 14px;border:1px solid #D8C9AF;
+      border-radius:11px;background:#FDFBF6;outline:none;text-align:center}
+button{font:inherit;font-size:.82rem;margin-top:10px;padding:11px 22px;border:1px solid #B08D57;
+       border-radius:11px;background:none;color:#7A5C33;cursor:pointer;letter-spacing:.1em}
+.hit{margin-top:10px;padding:12px;border:1px solid #E4D8C2;border-radius:11px;background:#FDFBF6;
+     display:flex;justify-content:space-between;align-items:center;gap:10px}
+.hit b{font-weight:400;font-size:.9rem}
+.hit span{font-family:Georgia,serif;color:#7A5C33;font-size:1.05rem;white-space:nowrap}
+.note{font-size:.66rem;color:#B0A28C;margin-top:26px;line-height:1.8}
+</style></head><body>
+<p class="mono">S &amp; L · 12.09.2026</p>
+<h1>ที่นั่งของฉัน</h1>
+<div id="out"></div>
+<div class="find" id="find" hidden>
+  <input id="q" placeholder="พิมพ์ชื่อ หรือรหัส SL-…">
+  <button id="go">ค้นหาที่นั่ง</button>
+  <div id="hits"></div>
+</div>
+<p class="note">แสดงหน้านี้พร้อม QR ที่จุดลงทะเบียน · Grand Ballroom ชั้น 2</p>
+<script>
+var EP='https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec';
+var out=document.getElementById('out'), find=document.getElementById('find');
+function cardHTML(name,table,seats,checkin){
+  var t=table?('<p class="tbl">'+table+'<small>โต๊ะของคุณ</small></p>')
+             :('<p class="wait">ทีมงานกำลังจัดผังที่นั่ง 🤍<br>กรุณาเปิดดูอีกครั้งใกล้วันงาน<br>หรือสอบถามที่จุดลงทะเบียน</p>');
+  return '<div class="card"><p class="lbl">Guest</p><p class="name">'+name+'</p>'+t+
+    (seats?'<p class="seats">'+seats+' ที่นั่ง'+(checkin?' · เช็คอินแล้ว '+checkin:'')+'</p>':'')+'</div>';
+}
+function byCode(c){
+  out.innerHTML='<div class="card"><p class="wait">กำลังค้นหา…</p></div>';
+  fetch(EP+'?action=seat&code='+encodeURIComponent(c)).then(r=>r.json()).then(function(j){
+    if(j.ok){out.innerHTML=cardHTML(j.name,j.table,j.seats,j.checkin);}
+    else{out.innerHTML='';find.hidden=false;
+         document.getElementById('q').value=c;
+         document.getElementById('hits').innerHTML=
+           '<p class="wait">ไม่พบรหัสนี้ — ลองค้นด้วยชื่อได้เลย</p>';}
+  }).catch(function(){out.innerHTML='<div class="card"><p class="wait">เชื่อมต่อไม่ได้ ลองใหม่อีกครั้ง</p></div>';});
+}
+document.getElementById('go').onclick=function(){
+  var q=document.getElementById('q').value.trim();
+  if(!q)return;
+  if(/^SL-/i.test(q)){byCode(q.toUpperCase());return;}
+  var h=document.getElementById('hits');
+  h.innerHTML='<p class="wait">กำลังค้นหา…</p>';
+  fetch(EP+'?action=seatByName&q='+encodeURIComponent(q)).then(r=>r.json()).then(function(j){
+    if(!j.ok||!j.hits||!j.hits.length){h.innerHTML='<p class="wait">ไม่พบชื่อนี้ในรายชื่อผู้ตอบรับ</p>';return;}
+    h.innerHTML=j.hits.map(function(x){
+      return '<div class="hit"><b>'+x.name+'</b><span>'+(x.table?('โต๊ะ '+x.table):'รอจัดที่นั่ง')+'</span></div>';
+    }).join('');
+  });
+};
+var c=new URLSearchParams(location.search).get('c');
+if(c)byCode(c); else find.hidden=false;
+</script></body></html>

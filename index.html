@@ -1151,14 +1151,17 @@ html.embed .folio{display:none}
   function showDone(d) {
     var box = document.createElement('div');
     box.className = 'done-card reveal in';
-    var qrData = encodeURIComponent(d.code + ' | ' + d.name + ' | ' + d.seats + ' ท่าน');
+    /* QR = ลิงก์หน้าที่นั่ง — แขกสแกนเองเห็นโต๊ะ / ทีมงานสแกนอ่านรหัสเช็คอินได้ */
+    var seatUrl = location.origin + location.pathname.replace(/[^/]*$/, '') +
+                  'table.html?c=' + encodeURIComponent(d.code);
+    var qrData = encodeURIComponent(seatUrl);
     var inner = '<p class="done-emoji">🤍</p>' +
       '<p class="done-title">ลงทะเบียนเรียบร้อยแล้ว</p>' +
       '<p class="done-sub">แล้วพบกันในบทที่สองของเรา</p>';
     if (d.going === 'yes') {
       inner += '<div class="done-code"><span>รหัสแขกของคุณ</span><b>' + d.code + '</b></div>' +
         '<img class="done-qr" alt="QR เช็คอิน" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&color=6B5637&bgcolor=FBF7EF&data=' + qrData + '">' +
-        '<p class="done-hint">บันทึกภาพหน้าจอไว้ แสดง QR นี้ที่จุดลงทะเบียนหน้างานได้เลย</p>';
+        '<p class="done-hint">บันทึกภาพหน้าจอไว้ — QR นี้ใช้เช็คอินหน้างาน และสแกนดู​โต๊ะที่นั่งของคุณได้เมื่อใกล้วันงาน</p>';
     }
     box.innerHTML = inner;
     var n = document.getElementById('rsvpNote');
