@@ -10,6 +10,8 @@ body{font-family:'Kanit',system-ui,sans-serif;font-weight:300;background:#F6F2EA
 .mono{font-family:Georgia,serif;font-size:.68rem;letter-spacing:.42em;color:#A9854F;
       text-transform:uppercase;text-indent:.42em}
 h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:1.5rem;margin-top:8px}
+.sub-en{font-family:Georgia,serif;font-size:.62rem;letter-spacing:.34em;color:#B0A28C;
+      text-transform:uppercase;margin-top:4px;text-indent:.34em}
 .card{width:min(360px,100%);margin-top:26px;background:#FDFBF6;border:1px solid rgba(178,141,87,.4);
       border-radius:18px;padding:30px 22px;box-shadow:0 16px 44px rgba(120,90,50,.12)}
 .lbl{font-size:.6rem;letter-spacing:.3em;color:#9A876B;text-transform:uppercase;text-indent:.3em}
@@ -19,6 +21,7 @@ h1{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:1.5rem;
      text-transform:uppercase}
 .seats{font-size:.78rem;color:#8A7458;margin-top:12px}
 .wait{font-size:.82rem;line-height:1.9;color:#8A7458;margin-top:14px}
+.en{display:block;font-family:Georgia,serif;font-style:italic;font-size:.86em;color:#B0A28C;margin-top:3px}
 .find{width:min(360px,100%);margin-top:22px}
 input{width:100%;font:inherit;font-size:.95rem;padding:12px 14px;border:1px solid #D8C9AF;
       border-radius:11px;background:#FDFBF6;outline:none;text-align:center}
@@ -29,45 +32,95 @@ button{font:inherit;font-size:.82rem;margin-top:10px;padding:11px 22px;border:1p
 .hit b{font-weight:400;font-size:.9rem}
 .hit span{font-family:Georgia,serif;color:#7A5C33;font-size:1.05rem;white-space:nowrap}
 .note{font-size:.66rem;color:#B0A28C;margin-top:26px;line-height:1.8}
+/* ── ยืนยันรอบสอง ── */
+.rc-head{font-size:.62rem;letter-spacing:.26em;color:#9A876B;text-transform:uppercase;text-indent:.26em}
+.rc-sub{font-size:.8rem;line-height:1.8;color:#8A7458;margin-top:10px}
+.rc-row{display:flex;gap:10px;margin-top:16px}
+.rc-row button{flex:1;margin-top:0;min-width:0;line-height:1.5}
+.rc-row button i{display:block;font-style:normal;font-family:Georgia,serif;font-size:.6rem;
+     letter-spacing:.12em;color:#B0A28C;text-transform:uppercase;margin-top:2px}
+.rc-row button.on{background:rgba(176,141,87,.16);border-color:#8A6A3F;color:#4A3018}
+.rc-done{font-size:.8rem;color:#7A5C33;margin-top:14px;line-height:1.8}
 </style></head><body>
 <p class="mono">S &amp; L · 12.09.2026</p>
 <h1>ที่นั่งของฉัน</h1>
+<p class="sub-en">My seat</p>
 <div id="out"></div>
+<div id="rc"></div>
 <div class="find" id="find" hidden>
-  <input id="q" placeholder="พิมพ์ชื่อ หรือรหัส SL-…">
-  <button id="go">ค้นหาที่นั่ง</button>
+  <input id="q" placeholder="พิมพ์ชื่อ หรือรหัส SL-… · Name or code">
+  <button id="go">ค้นหาที่นั่ง · FIND MY SEAT</button>
   <div id="hits"></div>
 </div>
-<p class="note">แสดงหน้านี้พร้อม QR ที่จุดลงทะเบียน · Grand Ballroom ชั้น 2</p>
+<p class="note">แสดงหน้านี้พร้อม QR ที่จุดลงทะเบียน · Grand Ballroom ชั้น 2<span class="en">Show this page at the registration desk</span></p>
 <script>
 var EP='https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec';
-var out=document.getElementById('out'), find=document.getElementById('find');
+var out=document.getElementById('out'), find=document.getElementById('find'), rc=document.getElementById('rc');
+var CODE='';
 function cardHTML(name,table,seats,checkin){
-  var t=table?('<p class="tbl">'+table+'<small>โต๊ะของคุณ</small></p>')
-             :('<p class="wait">ทีมงานกำลังจัดผังที่นั่ง 🤍<br>กรุณาเปิดดูอีกครั้งใกล้วันงาน<br>หรือสอบถามที่จุดลงทะเบียน</p>');
+  var t=table?('<p class="tbl">'+table+'<small>โต๊ะของคุณ · YOUR TABLE</small></p>')
+             :('<p class="wait">ทีมงานกำลังจัดผังที่นั่ง 🤍<br>กรุณาเปิดดูอีกครั้งใกล้วันงาน หรือสอบถามที่จุดลงทะเบียน'+
+               '<span class="en">Seating is being arranged — please check back closer to the day</span></p>');
   return '<div class="card"><p class="lbl">Guest</p><p class="name">'+name+'</p>'+t+
-    (seats?'<p class="seats">'+seats+' ที่นั่ง'+(checkin?' · เช็คอินแล้ว '+checkin:'')+'</p>':'')+'</div>';
+    (seats?'<p class="seats">'+seats+' ที่นั่ง · seats'+(checkin?' · เช็คอินแล้ว '+checkin:'')+'</p>':'')+'</div>';
+}
+/* ── ยืนยันการมาร่วมงานรอบสอง (จากลิงก์/QR ส่วนตัว) ── */
+function rcHTML(){
+  var saved=localStorage.getItem('rc_'+CODE);
+  return '<div class="card">'+
+    '<p class="rc-head">ยืนยันการมาร่วมงาน · Kindly reconfirm</p>'+
+    '<p class="rc-sub">ใกล้ถึงวันงานแล้ว ช่วยยืนยันอีกครั้ง เพื่อให้เราจัดทุกที่นั่งได้พอดี'+
+    '<span class="en">The day is near — a quick reconfirm helps us set every seat just right</span></p>'+
+    '<div class="rc-row">'+
+    '<button id="rcYes" class="'+(saved==='yes'?'on':'')+'">มาแน่นอน ✓<i>I\'ll be there</i></button>'+
+    '<button id="rcNo" class="'+(saved==='no'?'on':'')+'">มีเปลี่ยนแปลง<i>Plans changed</i></button>'+
+    '</div><p class="rc-done" id="rcDone">'+
+    (saved==='yes'?'ยืนยันแล้ว ขอบคุณค่ะ 🤍 · Reconfirmed, thank you':
+     saved==='no'?'รับทราบแล้ว ขอบคุณที่บอกกัน · Noted with love':'')+
+    '</p></div>';
+}
+function bindRC(){
+  ['Yes','No'].forEach(function(k){
+    var b=document.getElementById('rc'+k); if(!b)return;
+    b.onclick=function(){
+      var ans=(k==='Yes')?'yes':'no';
+      var done=document.getElementById('rcDone');
+      done.textContent='กำลังบันทึก… · Saving…';
+      fetch(EP+'?action=reconfirm&code='+encodeURIComponent(CODE)+'&ans='+ans)
+        .then(function(r){return r.json();})
+        .then(function(j){
+          if(!j.ok) throw 0;
+          localStorage.setItem('rc_'+CODE,ans);
+          rc.innerHTML=rcHTML(); bindRC();
+        })
+        .catch(function(){done.textContent='บันทึกไม่สำเร็จ ลองอีกครั้ง · Could not save, please retry';});
+    };
+  });
 }
 function byCode(c){
-  out.innerHTML='<div class="card"><p class="wait">กำลังค้นหา…</p></div>';
+  CODE=c;
+  out.innerHTML='<div class="card"><p class="wait">กำลังค้นหา… · Searching…</p></div>';
   fetch(EP+'?action=seat&code='+encodeURIComponent(c)).then(r=>r.json()).then(function(j){
-    if(j.ok){out.innerHTML=cardHTML(j.name,j.table,j.seats,j.checkin);}
+    if(j.ok){
+      out.innerHTML=cardHTML(j.name,j.table,j.seats,j.checkin);
+      rc.innerHTML=rcHTML(); bindRC();
+    }
     else{out.innerHTML='';find.hidden=false;
          document.getElementById('q').value=c;
          document.getElementById('hits').innerHTML=
-           '<p class="wait">ไม่พบรหัสนี้ — ลองค้นด้วยชื่อได้เลย</p>';}
-  }).catch(function(){out.innerHTML='<div class="card"><p class="wait">เชื่อมต่อไม่ได้ ลองใหม่อีกครั้ง</p></div>';});
+           '<p class="wait">ไม่พบรหัสนี้ — ลองค้นด้วยชื่อได้เลย<span class="en">Code not found — try your name</span></p>';}
+  }).catch(function(){out.innerHTML='<div class="card"><p class="wait">เชื่อมต่อไม่ได้ ลองใหม่อีกครั้ง<span class="en">Connection failed — please retry</span></p></div>';});
 }
 document.getElementById('go').onclick=function(){
   var q=document.getElementById('q').value.trim();
   if(!q)return;
   if(/^SL-/i.test(q)){byCode(q.toUpperCase());return;}
   var h=document.getElementById('hits');
-  h.innerHTML='<p class="wait">กำลังค้นหา…</p>';
+  h.innerHTML='<p class="wait">กำลังค้นหา… · Searching…</p>';
   fetch(EP+'?action=seatByName&q='+encodeURIComponent(q)).then(r=>r.json()).then(function(j){
-    if(!j.ok||!j.hits||!j.hits.length){h.innerHTML='<p class="wait">ไม่พบชื่อนี้ในรายชื่อผู้ตอบรับ</p>';return;}
+    if(!j.ok||!j.hits||!j.hits.length){h.innerHTML='<p class="wait">ไม่พบชื่อนี้ในรายชื่อผู้ตอบรับ<span class="en">Name not found in the guest list</span></p>';return;}
     h.innerHTML=j.hits.map(function(x){
-      return '<div class="hit"><b>'+x.name+'</b><span>'+(x.table?('โต๊ะ '+x.table):'รอจัดที่นั่ง')+'</span></div>';
+      return '<div class="hit"><b>'+x.name+'</b><span>'+(x.table?('โต๊ะ '+x.table):'รอจัด · TBA')+'</span></div>';
     }).join('');
   });
 };
