@@ -216,6 +216,7 @@ section:has(.dec[data-spot="bottom"]){padding-bottom:215px}
                  0 1px 3px rgba(255,255,255,.65)}
 .film-cap .fc-en{font-family:var(--f-sc);font-size:calc(var(--s2) * 1.22);
      letter-spacing:.4em;text-indent:.4em;text-transform:uppercase}
+.film-cap.cap-inline .fc-en,.film-cap.cap-inline .fc-th{display:inline;margin:0 .14em;vertical-align:baseline}
 .film-cap .fc-th{font-family:var(--f-script);font-size:calc(var(--s6) * .98);
      line-height:1.18;margin-top:10px;color:#8A6432}
 .gate.film .dip{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;
@@ -535,7 +536,7 @@ html.embed .folio{display:none}
     <img class="gate-media" id="gatePoster" src="assets/_frame1_intro_video.jpg" alt="">
     <video id="introVid" class="gate-media" preload="auto" muted playsinline
            src="assets/intro_video.mp4"></video>
-    <div class="film-cap" data-at="3.2" data-hold="3.4"><span class="fc-en">You are invited to be</span><span class="fc-th">part of a memory</span></div><div class="film-cap" data-at="7.2" data-hold="27.5"><span class="fc-en">The Wedding of</span><span class="fc-th">Song &amp; Lingling</span></div>
+    <div class="film-cap cap-inline" data-at="3.2" data-hold="2.2"><span class="fc-en">You are invited to be</span><span class="fc-th">part of a memory</span></div><div class="film-cap" data-at="5.8" data-hold="28.9"><span class="fc-en">The Wedding of</span><span class="fc-th">Song &amp; Lingling</span></div>
     <div class="dip" id="gateDip" aria-hidden="true"></div>
     <button class="env-tap" id="sealBtn" aria-label="เปิดการ์ดเชิญ">
       <span class="env-hint">
