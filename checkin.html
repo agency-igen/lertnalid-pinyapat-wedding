@@ -1,42 +1,75 @@
 <!doctype html><html lang="th"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <meta name="robots" content="noindex">
-<title>เช็คอินแขก · S&L</title>
+<title>Registration · S&L</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Kanit',system-ui,sans-serif;font-weight:300;background:#F6F2EA;color:#2A1E16;
-     min-height:100svh;padding:18px 14px 60px}
-h1{font-size:1rem;font-weight:400;letter-spacing:.08em;text-align:center;color:#7A5C33}
-.sub{text-align:center;font-size:.7rem;color:#9A876B;margin-top:2px}
-.bar{display:flex;gap:8px;margin-top:14px}
-input{flex:1;font:inherit;font-size:.95rem;padding:11px 13px;border:1px solid #D8C9AF;
-      border-radius:10px;background:#FDFBF6;outline:none}
-button{font:inherit;font-size:.8rem;padding:11px 14px;border:1px solid #B08D57;border-radius:10px;
-       background:none;color:#7A5C33;cursor:pointer}
+     min-height:100svh;padding:16px 14px 90px}
+h1{font-size:.95rem;font-weight:400;letter-spacing:.1em;text-align:center;color:#7A5C33}
+.sub{text-align:center;font-size:.66rem;color:#9A876B;margin-top:1px}
 .stats{display:flex;gap:8px;margin-top:12px}
-.st{flex:1;background:#FDFBF6;border:1px solid #E4D8C2;border-radius:10px;padding:9px;text-align:center}
-.st b{display:block;font-size:1.15rem;font-weight:500;color:#6B5637}
+.st{flex:1;background:#FDFBF6;border:1px solid #E4D8C2;border-radius:12px;padding:10px;text-align:center}
+.st b{display:block;font-size:1.3rem;font-weight:500;color:#6B5637}
 .st span{font-size:.6rem;color:#9A876B}
+.st.in b{color:#4F7D4F}
+.bar{display:flex;gap:8px;margin-top:12px}
+input{flex:1;font:inherit;font-size:.95rem;padding:12px 13px;border:1px solid #D8C9AF;
+      border-radius:11px;background:#FDFBF6;outline:none;min-width:0}
 .row{display:flex;align-items:center;gap:10px;background:#FDFBF6;border:1px solid #E4D8C2;
-     border-radius:12px;padding:11px 13px;margin-top:8px}
+     border-radius:12px;padding:12px 13px;margin-top:8px;cursor:pointer}
 .row .nm{flex:1;min-width:0}
-.row .nm b{font-weight:400;font-size:.92rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.row .nm span{font-size:.64rem;color:#9A876B}
-.row .tag{font-size:.62rem;color:#5C8A5C;border:1px solid #BDD8BD;background:#F0F7F0;
-     padding:3px 8px;border-radius:20px;white-space:nowrap}
-.row button{padding:8px 13px;font-size:.72rem;border-radius:9px}
-#msg{position:fixed;left:14px;right:14px;bottom:14px;padding:13px;border-radius:12px;text-align:center;
-     font-size:.85rem;background:#2A1E16;color:#F6F2EA;opacity:0;transition:.3s;pointer-events:none}
+.row .nm b{font-weight:400;font-size:.94rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .nm span{font-size:.63rem;color:#9A876B}
+.tag{font-size:.62rem;padding:4px 9px;border-radius:20px;white-space:nowrap}
+.tag.ok{color:#3F6E3F;border:1px solid #BDD8BD;background:#F0F7F0}
+.tag.no{color:#9A876B;border:1px solid #E4D8C2;background:#FAF6EE}
+#scanFab{position:fixed;left:14px;right:14px;bottom:14px;padding:15px;border:0;border-radius:14px;
+     background:#7A5C33;color:#F6F2EA;font:inherit;font-size:1rem;letter-spacing:.06em;cursor:pointer;
+     box-shadow:0 10px 26px rgba(80,60,30,.3)}
+#scanFab:disabled{opacity:.5}
+/* ── การ์ดแขก (bottom sheet) ── */
+#ovl{position:fixed;inset:0;background:rgba(30,22,14,.45);z-index:50;display:none;
+     align-items:flex-end;justify-content:center}
+#ovl.on{display:flex}
+#sheet{width:min(480px,100%);background:#FDFBF6;border-radius:22px 22px 0 0;
+     padding:20px 20px 26px;animation:up .28s cubic-bezier(.2,.8,.3,1)}
+@keyframes up{from{transform:translateY(60px);opacity:.4}to{transform:none;opacity:1}}
+.g-name{font-size:1.25rem;font-weight:500;color:#3A2A18}
+.g-code{font-size:.68rem;color:#9A876B;letter-spacing:.1em;margin-top:2px}
+.g-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+.g-cell{background:#F6F1E7;border-radius:11px;padding:10px 12px}
+.g-cell.wide{grid-column:1/-1}
+.g-cell span{display:block;font-size:.58rem;letter-spacing:.14em;color:#9A876B;text-transform:uppercase}
+.g-cell b{font-weight:400;font-size:.95rem;color:#4A3826}
+.g-cell.tb b{font-family:Georgia,serif;font-size:1.5rem;color:#7A5C33}
+.g-cell.warn b{color:#A2542E}
+.g-act{display:flex;gap:10px;margin-top:16px}
+.g-act button{flex:1;font:inherit;font-size:.95rem;padding:14px;border-radius:12px;cursor:pointer}
+#doReg{border:0;background:#4F7D4F;color:#fff;letter-spacing:.04em}
+#doReg:disabled{background:#9DBb9D;background:#9DB99D}
+#closeSheet{border:1px solid #D8C9AF;background:none;color:#7A5C33}
+.done-flash{text-align:center;padding:26px 0 10px}
+.done-flash .big{font-size:2.4rem}
+.done-flash p{margin-top:6px;font-size:1rem;color:#3F6E3F}
+#msg{position:fixed;left:14px;right:14px;bottom:76px;padding:12px;border-radius:12px;text-align:center;
+     font-size:.85rem;background:#2A1E16;color:#F6F2EA;opacity:0;transition:.3s;pointer-events:none;z-index:60}
 #msg.on{opacity:1}
+video.cam{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:70}
+.cam-hint{position:fixed;left:0;right:0;bottom:30px;z-index:71;text-align:center;color:#fff;
+     font-size:.85rem;text-shadow:0 1px 8px rgba(0,0,0,.7)}
 </style></head><body>
-<h1>จุดลงทะเบียนหน้างาน 🤍</h1>
-<p class="sub">Lertnalid & Pinyapat · 12.09.2026</p>
-<div class="bar"><input id="q" placeholder="พิมพ์ชื่อ หรือรหัส SL-…" autocomplete="off">
-<button id="scanBtn" hidden>📷 สแกน</button></div>
-<div class="stats"><div class="st"><b id="sTot">–</b><span>ตอบรับ (คน)</span></div>
-<div class="st"><b id="sIn">–</b><span>เช็คอินแล้ว</span></div>
-<div class="st"><b id="sLeft">–</b><span>ยังไม่มา</span></div></div>
+<h1>REGISTRATION DESK 🤍</h1>
+<p class="sub">Lertnalid & Pinyapat · Grand Ballroom · 12.09.2026</p>
+<div class="stats">
+  <div class="st"><b id="sTot">–</b><span>ตอบรับ (คน)</span></div>
+  <div class="st in"><b id="sIn">–</b><span>เช็คอินแล้ว</span></div>
+  <div class="st"><b id="sLeft">–</b><span>ยังไม่มา</span></div>
+</div>
+<div class="bar"><input id="q" placeholder="ค้นชื่อ หรือรหัส SL-…" autocomplete="off"></div>
 <div id="list"></div>
+<button id="scanFab">📷 สแกน QR แขก</button>
+<div id="ovl"><div id="sheet"></div></div>
 <p id="msg"></p>
 <script>
 var EP='https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec';
@@ -44,48 +77,97 @@ var KEY=localStorage.getItem('slkey')||'';
 while(!KEY){KEY=prompt('รหัสทีมงาน');if(KEY)localStorage.setItem('slkey',KEY);}
 var ROWS=[];
 function msg(t){var m=document.getElementById('msg');m.textContent=t;m.classList.add('on');
-  setTimeout(function(){m.classList.remove('on');},2200);}
+  setTimeout(function(){m.classList.remove('on');},2400);}
 function load(){fetch(EP+'?action=list').then(r=>r.json()).then(function(j){
-  ROWS=(j.rows||[]).filter(r=>r.going==='yes');draw();});}
-function draw(){
-  var q=(document.getElementById('q').value||'').toLowerCase().trim();
-  var tot=0,inn=0;
+  ROWS=(j.rows||[]).filter(r=>r.going==='yes');draw();}).catch(function(){});}
+function stat(){var tot=0,inn=0;
   ROWS.forEach(function(r){tot+=Number(r.seats)||1;if(r.checkin)inn+=Number(r.seats)||1;});
-  sTot.textContent=tot;sIn.textContent=inn;sLeft.textContent=tot-inn;
+  sTot.textContent=tot;sIn.textContent=inn;sLeft.textContent=tot-inn;}
+function draw(){
+  stat();
+  var q=(document.getElementById('q').value||'').toLowerCase().trim();
   var el=document.getElementById('list');el.innerHTML='';
   ROWS.filter(function(r){return !q||String(r.name).toLowerCase().includes(q)||
       String(r.code).toLowerCase().includes(q);})
     .forEach(function(r){
       var d=document.createElement('div');d.className='row';
-      d.innerHTML='<div class="nm"><b>'+r.name+'</b><span>'+(r.seats||1)+' ท่าน · '+(r.code||'-')+
-        (r.table?' · โต๊ะ '+r.table:'')+(r.food?' · '+r.food:'')+(r.diet?' · ⚠️ '+r.diet:'')+'</span></div>'+
-        (r.checkin?'<span class="tag">✓ '+r.checkin+'</span>':'<button>เช็คอิน</button>');
-      var b=d.querySelector('button');
-      if(b)b.onclick=function(){b.disabled=true;
-        fetch(EP+'?action=checkin&code='+encodeURIComponent(r.code)+'&key='+encodeURIComponent(KEY))
-        .then(x=>x.json()).then(function(j){
-          if(j.ok){r.checkin=j.at;msg('✓ '+r.name+' เช็คอินแล้ว');draw();}
-          else{b.disabled=false;msg(j.error==='key'?'รหัสทีมงานไม่ถูก':'ไม่พบรหัสนี้');
-               if(j.error==='key'){localStorage.removeItem('slkey');}}});};
+      d.innerHTML='<div class="nm"><b>'+r.name+'</b><span>'+(r.seats||1)+' ท่าน'+
+        (r.table?' · โต๊ะ '+r.table:'')+' · '+(r.code||'-')+'</span></div>'+
+        (r.checkin?'<span class="tag ok">✓ '+r.checkin+'</span>':'<span class="tag no">ยังไม่มา</span>');
+      d.onclick=function(){openGuest(r);};
       el.appendChild(d);});}
+function esc(x){return String(x==null?'':x).replace(/[<>&"]/g,function(c){
+  return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];});}
+function openGuest(r){
+  var sh=document.getElementById('sheet');
+  sh.innerHTML='<p class="g-name">'+esc(r.name)+'</p>'+
+    '<p class="g-code">'+esc(r.code||'-')+(r.checkin?' · ✓ เช็คอินแล้ว '+esc(r.checkin):'')+'</p>'+
+    '<div class="g-grid">'+
+    '<div class="g-cell tb"><span>โต๊ะ</span><b>'+(esc(r.table)||'—')+'</b></div>'+
+    '<div class="g-cell"><span>จำนวน</span><b>'+esc(r.seats||1)+' ท่าน</b></div>'+
+    '<div class="g-cell"><span>อาหาร</span><b>'+(esc(r.food)||'—')+'</b></div>'+
+    '<div class="g-cell'+(r.diet?' warn':'')+'"><span>งด/แพ้</span><b>'+(esc(r.diet)||'—')+'</b></div>'+
+    (r.note?'<div class="g-cell wide"><span>คำอวยพร</span><b>'+esc(r.note)+'</b></div>':'')+
+    '</div>'+
+    '<div class="g-act">'+
+    '<button id="closeSheet">ปิด</button>'+
+    (r.checkin?'':'<button id="doReg">✓ เช็คอิน '+esc(r.seats||1)+' ท่าน</button>')+
+    '</div>';
+  document.getElementById('ovl').classList.add('on');
+  document.getElementById('closeSheet').onclick=closeSheet;
+  var b=document.getElementById('doReg');
+  if(b)b.onclick=function(){
+    b.disabled=true;b.textContent='กำลังบันทึก…';
+    fetch(EP+'?action=checkin&code='+encodeURIComponent(r.code)+'&key='+encodeURIComponent(KEY))
+      .then(x=>x.json()).then(function(j){
+        if(j.ok){
+          r.checkin=j.at;draw();
+          sh.innerHTML='<div class="done-flash"><div class="big">🤍</div>'+
+            '<p>'+esc(r.name)+' · เช็คอินแล้ว '+esc(j.at)+'</p>'+
+            (r.table?'<p style="color:#7A5C33;font-size:1.3rem;font-family:Georgia,serif;margin-top:4px">โต๊ะ '+esc(r.table)+'</p>':'')+
+            '</div><div class="g-act"><button id="closeSheet">ปิด</button>'+
+            '<button id="nextScan" style="border:0;background:#7A5C33;color:#fff;border-radius:12px">📷 สแกนคนต่อไป</button></div>';
+          document.getElementById('closeSheet').onclick=closeSheet;
+          document.getElementById('nextScan').onclick=function(){closeSheet();scan();};
+        }else{
+          b.disabled=false;b.textContent='✓ เช็คอิน';
+          msg(j.error==='key'?'รหัสทีมงานไม่ถูกต้อง':'บันทึกไม่สำเร็จ ลองใหม่');
+          if(j.error==='key')localStorage.removeItem('slkey');
+        }
+      }).catch(function(){b.disabled=false;b.textContent='✓ เช็คอิน';msg('เชื่อมต่อไม่ได้');});
+  };
+}
+function closeSheet(){document.getElementById('ovl').classList.remove('on');}
+document.getElementById('ovl').addEventListener('click',function(e){
+  if(e.target===this)closeSheet();});
 document.getElementById('q').addEventListener('input',draw);
-if('BarcodeDetector' in window){var sb=document.getElementById('scanBtn');sb.hidden=false;
-  sb.onclick=async function(){
-    var v=document.createElement('video');v.style.cssText='position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:99';
-    var st=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
-    v.srcObject=st;document.body.appendChild(v);await v.play();
+function codeFrom(raw){
+  raw=String(raw||'').trim();
+  var m=raw.match(/[?&]c=([^&\s]+)/);
+  if(m)return decodeURIComponent(m[1]).toUpperCase();
+  return raw.split('|')[0].trim().toUpperCase();
+}
+function scan(){
+  if(!('BarcodeDetector' in window)){msg('เครื่องนี้ไม่รองรับสแกน — ใช้ช่องค้นหาแทน');return;}
+  var v=document.createElement('video');v.className='cam';v.muted=true;v.playsInline=true;
+  var hint=document.createElement('p');hint.className='cam-hint';hint.textContent='เล็ง QR ของแขก · แตะจอเพื่อยกเลิก';
+  navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}).then(function(st){
+    v.srcObject=st;document.body.appendChild(v);document.body.appendChild(hint);v.play();
     var det=new BarcodeDetector({formats:['qr_code']});
-    var iv=setInterval(async function(){
-      var cs=await det.detect(v).catch(()=>[]);
-      if(cs.length){clearInterval(iv);st.getTracks().forEach(t=>t.stop());v.remove();
-        var raw=(cs[0].rawValue||'').trim();
-        var code=raw.split('|')[0].trim();
-        var m=raw.match(/[?&]c=([^&\s]+)/);          /* QR แบบลิงก์หน้าที่นั่ง */
-        if(m)code=decodeURIComponent(m[1]);
-        document.getElementById('q').value=code;draw();
-        var r=ROWS.find(x=>x.code===code);
-        msg(r?('พบ: '+r.name):'ไม่พบรหัสในรายชื่อ');}
-    },400);
-    v.onclick=function(){clearInterval(iv);st.getTracks().forEach(t=>t.stop());v.remove();};};}
-load();setInterval(load,30000);
+    var stop=function(){clearInterval(iv);st.getTracks().forEach(t=>t.stop());v.remove();hint.remove();};
+    var iv=setInterval(function(){
+      det.detect(v).then(function(cs){
+        if(!cs.length)return;
+        var code=codeFrom(cs[0].rawValue);
+        var r=ROWS.find(function(x){return String(x.code).toUpperCase()===code;});
+        stop();
+        if(r){openGuest(r);if(navigator.vibrate)navigator.vibrate(60);}
+        else msg('ไม่พบรหัส '+code+' ในรายชื่อ');
+      }).catch(function(){});
+    },380);
+    v.onclick=stop;
+  }).catch(function(){msg('เปิดกล้องไม่ได้ — เช็คสิทธิ์กล้องของเบราว์เซอร์');});
+}
+document.getElementById('scanFab').onclick=scan;
+load();setInterval(load,25000);
 </script></body></html>
