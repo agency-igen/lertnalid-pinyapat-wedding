@@ -292,7 +292,7 @@ section:has(.dec[data-spot="bottom"]){padding-bottom:215px}
      border:1px solid rgba(178,141,87,.35);padding:7px;background:#FBF7EF}
 .done-hint{font-family:var(--f-th);font-weight:300;font-size:.66rem;color:var(--ink-soft);
      margin-top:10px;line-height:1.8}
-.form-warn{font-size:.55rem;line-height:1.5;color:#A0805A;margin-top:7px;
+.form-warn{font-size:.55rem;line-height:1.5;color:#8A6A40;margin-top:7px;
      white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #yesExtra{display:grid;gap:17px;margin-bottom:14px}   /* เว้นก่อนช่องอวยพร */
 #yesExtra[hidden]{display:none}
@@ -347,19 +347,24 @@ section:has(.dec[data-spot="bottom"]){padding-bottom:215px}
      letter-spacing:.3em;text-indent:.3em}
 .btn.solid:active{background:var(--gold);color:var(--paper-lit)}
 .btn.solid:hover{background:var(--ink);border-color:var(--ink)}
-.form{width:100%;max-width:360px;margin-top:24px;display:grid;gap:17px;text-align:left}
-.form label{font-family:var(--f-caps);font-size:.55rem;letter-spacing:.24em;color:var(--ink-soft)}
+.form{width:100%;max-width:372px;margin-top:24px;display:grid;gap:17px;text-align:left;
+  background:rgba(253,250,243,.82);border:1px solid rgba(178,141,87,.28);
+  border-radius:16px;padding:22px 18px 24px;
+  -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px)}
+.form label{font-family:var(--f-caps);font-size:.6rem;letter-spacing:.22em;
+  color:#6B5330;font-weight:600}
 .form input,.form textarea,.form select{width:100%;font-family:var(--f-th);font-weight:300;
-  font-size:.92rem;color:var(--ink);background:none;
-  border:0;border-bottom:1px solid rgba(160,130,85,.3);padding:8px 2px;margin-top:4px}
-.form ::placeholder{color:rgba(120,100,75,.38)}
+  font-size:.95rem;color:#2A1E16;background:rgba(255,255,255,.55);
+  border:0;border-bottom:1px solid rgba(140,110,70,.45);border-radius:6px 6px 0 0;
+  padding:9px 8px;margin-top:5px}
+.form ::placeholder{color:rgba(110,90,65,.5)}
 .form input:focus,.form textarea:focus,.form select:focus{outline:none;border-bottom-color:var(--gold)}
 .seg{display:flex;gap:8px;margin-top:6px}
-.seg button{flex:1;font-family:var(--f-caps);font-size:.58rem;letter-spacing:.14em;
-            padding:9px 4px;border:1px solid rgba(160,130,85,.28);background:none;
-            color:var(--ink-soft);cursor:pointer;transition:.3s;border-radius:2px}
-.seg button[aria-pressed="true"]{background:rgba(201,160,99,.12);color:#7A5C33;
-            border-color:var(--gold);font-weight:500}
+.seg button{flex:1;font-family:var(--f-caps);font-size:.6rem;letter-spacing:.14em;
+            padding:10px 4px;border:1px solid rgba(140,110,70,.4);background:rgba(255,255,255,.5);
+            color:#4A3826;cursor:pointer;transition:.3s;border-radius:6px}
+.seg button[aria-pressed="true"]{background:rgba(191,148,84,.22);color:#4A3018;
+            border-color:#9C7A45;font-weight:600}
 .note{font-family:var(--f-th);font-weight:300;font-size:.68rem;color:var(--ink-soft);
       margin-top:12px;line-height:1.75}
 .note.ok{color:var(--gold)} .note.err{color:#9C4B3B}
@@ -1031,6 +1036,7 @@ html.embed .folio{display:none}
     var btns = document.querySelectorAll(sel + ' button');
     btns.forEach(function (b) {
       b.addEventListener('click', function () {
+        sfxTick();
         fn(b);
         btns.forEach(function (x) {
           x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
