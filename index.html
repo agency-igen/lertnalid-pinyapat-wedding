@@ -200,11 +200,10 @@ section:has(.dec[data-spot="bottom"]){padding-bottom:215px}
 /* ขนาดคุมจากหลังบ้าน (--ivw = ขนาด/100) — section เป็น flex กึ่งกลาง จึงล้นได้สมมาตร */
 .hero-ill.vid{width:min(calc((100% + 60px) * var(--ivw,1)),calc(486px * var(--ivw,1)))}
 /* ── ฉากเปิดแบบวิดีโอเต็มจอ + จางเป็นขาว ── */
-.gate.film{background:#000}
+.gate.film{background:var(--paper)}
 .gate.film .gate-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .gate.film #introVid{opacity:0;transition:opacity .45s ease}
 .gate.film.playing #introVid{opacity:1}
-.gate.film.playing #gatePoster{opacity:0;transition:opacity .45s ease}
 /* ข้อความบนวิดีโอเปิด — จางเข้า/ออกตามเวลาที่ตั้งไว้ */
 .film-cap{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;
      justify-content:center;align-items:center;text-align:center;
@@ -830,7 +829,13 @@ html.embed .folio{display:none}
     /* ── ฉากเปิด: วิดีโอเต็มจอ → จางเป็นขาว → การ์ดโผล่จากขาว ── */
     if (CFG.gateStyle === 'film' && vid && vid.src && !reduce) {
       var DIP_IN = 900, DIP_OUT = 1100;
-      gate.classList.add('playing');
+      /* เฟดวิดีโอทับเมื่อ "เริ่มเล่นจริง" เท่านั้น — โปสเตอร์ (เฟรมแรกเดียวกัน)
+         ค้างเป็นพื้นรองตลอด จึงไม่มีวาบดำ/แสงกระตุกตอนแตะ */
+      var showV = function () { gate.classList.add('playing'); };
+      vid.addEventListener('playing', showV, { once: true });
+      vid.addEventListener('timeupdate', function tu() {
+        if (vid.currentTime > 0.02) { vid.removeEventListener('timeupdate', tu); showV(); }
+      });
       var doneF = false;
       var toWhite = function () {
         if (doneF) return; doneF = true;
