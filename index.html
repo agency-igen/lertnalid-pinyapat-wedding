@@ -245,6 +245,33 @@ section:has(.dec[data-spot="bottom"]){padding-bottom:215px}
 .ill-labels span{font-family:'Great Vibes','Parisienne','Kanit',cursive;
      font-size:1.5rem;line-height:1.3;color:var(--gold);letter-spacing:.02em}
 .ill-labels span:empty{display:none}
+/* หน้าซอง — QR ในกรอบทอง + เลขบัญชีคัดลอกได้ */
+.gift-qr{width:min(210px,58%);margin:18px auto 0;padding:12px;background:#FDFBF6;
+     border:1px solid rgba(178,141,87,.45);border-radius:14px;
+     box-shadow:0 10px 34px rgba(120,90,50,.12)}
+.gift-qr img{width:100%;display:block;border-radius:6px}
+.gift-acc{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:6px}
+.gift-acc b{font-family:var(--f-caps);font-weight:500;font-size:1.02rem;
+     letter-spacing:.1em;color:#6B5637}
+.gift-copy{font-family:var(--f-th);font-weight:300;font-size:.66rem;color:#7A5C33;
+     border:1px solid rgba(178,141,87,.45);background:none;border-radius:6px;
+     padding:4px 10px;cursor:pointer}
+.gift-copy:active{background:rgba(201,160,99,.15)}
+/* การ์ดยืนยันหลังลงทะเบียน */
+.done-card{margin-top:18px;padding:26px 20px;border:1px solid rgba(178,141,87,.4);
+     border-radius:14px;background:rgba(251,247,239,.85);text-align:center}
+.done-emoji{font-size:1.6rem}
+.done-title{font-family:var(--f-th);font-weight:400;font-size:1.02rem;color:#5C4327;margin-top:6px}
+.done-sub{font-family:var(--f-th);font-weight:300;font-size:.78rem;color:var(--ink-soft);margin-top:3px}
+.done-code{margin-top:16px}
+.done-code span{display:block;font-family:var(--f-caps);font-size:.55rem;letter-spacing:.26em;
+     color:var(--ink-soft)}
+.done-code b{display:block;font-family:var(--f-caps);font-weight:600;font-size:1.5rem;
+     letter-spacing:.14em;color:#7A5C33;margin-top:4px}
+.done-qr{width:150px;height:150px;margin:14px auto 0;display:block;border-radius:10px;
+     border:1px solid rgba(178,141,87,.35);padding:7px;background:#FBF7EF}
+.done-hint{font-family:var(--f-th);font-weight:300;font-size:.66rem;color:var(--ink-soft);
+     margin-top:10px;line-height:1.8}
 .form-warn{font-size:.55rem;line-height:1.5;color:#A0805A;margin-top:7px;
      white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #yesExtra{display:grid;gap:17px;margin-bottom:14px}   /* เว้นก่อนช่องอวยพร */
@@ -996,23 +1023,33 @@ html.embed .folio{display:none}
     var name = val('gname');
     var name2 = cnt === '2' ? val('gname2') : '';
     if (name2) name += ' และ ' + name2;       /* สองชื่อลงช่องเดียว — จัดโต๊ะเห็นครบ */
-    var parts = [];
-    if (att === 'yes') {                      /* ไม่ไป = ไม่ต้องบันทึกเรื่องอาหาร */
-      parts.push('อาหาร: ' + food);
-      var diet = val('gdiet');
-      if (diet) parts.push('งด/แพ้: ' + diet);
-    }
+    var diet = att === 'yes' ? val('gdiet') : '';
     var msg = val('gmsg');
+    /* note รวมไว้เผื่อ Apps Script ตัวเก่า — ตัวใหม่ใช้ฟิลด์แยก */
+    var parts = [];
+    if (att === 'yes') { parts.push('อาหาร: ' + food); if (diet) parts.push('งด/แพ้: ' + diet); }
     if (msg) parts.push(msg);
+    if (!myCode) myCode = makeCode();
     return {
       cardId: CFG.cardId || '',
       name: name,
       going: att,
       seats: att === 'yes' ? cnt : '0',
+      food: att === 'yes' ? food : '',
+      diet: diet,
+      msg: msg,
       note: parts.join(' · '),
-      code: CODE,
+      code: CODE || myCode,
       at: new Date().toISOString()
     };
+  }
+  /* รหัสแขกสำหรับเช็คอินหน้างาน — สั้น อ่านง่าย ไม่ซ้ำกันจริงในสเกลงานแต่ง */
+  var myCode = '';
+  function makeCode() {
+    var t = Date.now().toString(36).slice(-3).toUpperCase();
+    var r = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+    var x = r[Math.floor(Math.random() * r.length)] + r[Math.floor(Math.random() * r.length)];
+    return 'SL-' + t + x;
   }
   function compose() {
     var d = data();
@@ -1051,7 +1088,7 @@ html.embed .folio{display:none}
       .then(function (j) {
         if (!j || j.ok === false) throw new Error('rejected');
         form.style.display = 'none';
-        note(document.getElementById('rsvpNote').dataset.thanks || 'ขอบคุณที่ตอบรับ', 'ok');
+        showDone(data());
         track('rsvp');
       })
       .catch(fallback);
@@ -1061,6 +1098,24 @@ html.embed .folio{display:none}
       note('ส่งอัตโนมัติไม่ได้ — ใช้ปุ่ม "ตอบผ่าน LINE" หรือ "คัดลอกข้อความ" ด้านล่างได้เลย', 'err');
     }
   });
+
+  /* การ์ดยืนยันหลังส่งสำเร็จ — โชว์รหัสแขก + QR ให้เซฟไว้สแกนหน้างาน */
+  function showDone(d) {
+    var box = document.createElement('div');
+    box.className = 'done-card reveal in';
+    var qrData = encodeURIComponent(d.code + ' | ' + d.name + ' | ' + d.seats + ' ท่าน');
+    var inner = '<p class="done-emoji">🤍</p>' +
+      '<p class="done-title">ลงทะเบียนเรียบร้อยแล้ว</p>' +
+      '<p class="done-sub">แล้วพบกันในบทที่สองของเรา</p>';
+    if (d.going === 'yes') {
+      inner += '<div class="done-code"><span>รหัสแขกของคุณ</span><b>' + d.code + '</b></div>' +
+        '<img class="done-qr" alt="QR เช็คอิน" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&color=6B5637&bgcolor=FBF7EF&data=' + qrData + '">' +
+        '<p class="done-hint">บันทึกภาพหน้าจอไว้ แสดง QR นี้ที่จุดลงทะเบียนหน้างานได้เลย</p>';
+    }
+    box.innerHTML = inner;
+    var n = document.getElementById('rsvpNote');
+    n.parentNode.insertBefore(box, n);
+  }
 
   var lineBtn = document.getElementById('lineBtn');
   if (lineBtn) lineBtn.addEventListener('click', function () {
@@ -1084,6 +1139,15 @@ html.embed .folio{display:none}
       ta.remove();
     }
   }
+
+  /* ปุ่มคัดลอกเลขบัญชีหน้าซอง */
+  document.querySelectorAll('.gift-copy').forEach(function (b) {
+    b.addEventListener('click', function () {
+      copy(b.dataset.copy);
+      b.textContent = 'คัดลอกแล้ว ✓';
+      setTimeout(function () { b.textContent = 'คัดลอก'; }, 1800);
+    });
+  });
 
   /* ── เพิ่มลงปฏิทิน ────────────────────────────────────────────── */
   var calBtn = document.getElementById('calBtn');
