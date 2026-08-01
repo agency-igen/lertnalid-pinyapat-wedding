@@ -294,8 +294,11 @@ section:has(.dec[data-spot="bottom"]){padding-bottom:215px}
      margin-top:10px;line-height:1.8}
 .form-warn{font-size:.55rem;line-height:1.5;color:#8A6A40;margin-top:7px;
      white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#yesExtra{display:grid;gap:17px;margin-bottom:14px}   /* เว้นก่อนช่องอวยพร */
-#yesExtra[hidden]{display:none}
+#yesExtra{display:grid;grid-template-rows:0fr;opacity:0;
+  transition:grid-template-rows .42s cubic-bezier(.3,.7,.3,1),opacity .3s ease,margin .42s ease;
+  margin-bottom:0}
+#yesExtra.open{grid-template-rows:1fr;opacity:1;margin-bottom:14px}
+#yesExtra>.yx-in{min-height:0;overflow:hidden;display:grid;gap:17px;padding-top:2px}
 /* เผยตัวด้วยความทึบล้วน — พอถึง 1 แล้วชั้นซ้อนหายไป โหมดผสมจึงถึงพื้นการ์ด */
 .reveal.rv-fade{opacity:0;transform:none;filter:none}
 .reveal.rv-fade.in{opacity:1;transform:none;filter:none;
@@ -654,7 +657,7 @@ html.embed .folio{display:none}
             <button type="button" data-att="yes" aria-pressed="false">ไปแน่นอน</button>
             <button type="button" data-att="no" aria-pressed="false">ไม่สะดวก</button>
           </div></div>
-        <div id="yesExtra" hidden>
+        <div id="yesExtra"><div class="yx-in">
         <div><label>จำนวนผู้ร่วมงาน · GUESTS</label>
           <div class="seg seg-cnt" role="group">
             <button type="button" data-cnt="1" aria-pressed="true">มา 1 ท่าน</button>
@@ -671,7 +674,7 @@ html.embed .folio{display:none}
           </div></div>
         <div><label for="gdiet">อาหารที่ไม่ทาน / แพ้อาหาร (ถ้ามี)</label>
           <input id="gdiet" name="gdiet" placeholder="เช่น ไม่ทานหมู · แพ้กุ้ง · มังสวิรัติ"></div>
-        </div>
+        </div></div>
         <div><label for="gmsg">คำอวยพร · A LINE FOR CHAPTER TWO</label>
           <textarea id="gmsg" name="gmsg" rows="3"></textarea></div>
         <button class="btn solid" type="submit" id="sendBtn" style="margin-top:6px">SEND MY REPLY</button>
@@ -1047,7 +1050,7 @@ html.embed .folio{display:none}
   segBind('.seg-att', function (b) {
     att = b.dataset.att;
     var ex = document.getElementById('yesExtra');
-    if (ex) ex.hidden = att !== 'yes';       /* จำนวน/อาหาร โผล่เฉพาะตอบ "ไปแน่นอน" */
+    if (ex) ex.classList.toggle('open', att === 'yes');       /* จำนวน/อาหาร โผล่เฉพาะตอบ "ไปแน่นอน" */
     var w2 = document.getElementById('g2wrap');
     if (w2) w2.hidden = !(att === 'yes' && cnt === '2');
   });
