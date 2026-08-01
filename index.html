@@ -473,6 +473,12 @@ html.amb .sheen{background-image:linear-gradient(100deg,
 /* โหมดฝังใน iframe — 100svh ยุบเป็น 0 ในกรอบ ทำให้หน้าว่าง ต้องสลับเป็นเลย์เอาต์ไหล */
 html.embed,html.embed body{height:auto;overflow:visible}
 html.embed .book{min-height:0;overflow:visible;box-shadow:none}
+@supports (height: 100dvh){
+  html:not(.embed) .book{min-height:100dvh}
+  html:not(.embed) .scroller{height:100dvh}
+  html:not(.embed) section.fullvh{min-height:100dvh}
+}
+#gatePoster{object-position:center bottom}
 html.embed .scroller{height:auto;overflow:visible;scroll-snap-type:none}
 html.snap section{scroll-snap-align:start;min-height:100svh}
 html.embed section.fullvh{min-height:var(--vp,760px)}
@@ -1220,27 +1226,21 @@ html.embed .folio{display:none}
 
   /* ── เสียงประกอบเล็ก ๆ (UI + น้องหมาน้องแมว) ─────────────────────
      ทุกเสียงเปิดหลังแตะเปิดซองเท่านั้น และปิดพร้อมปุ่ม ♪ ตัวเดียวกัน   */
-  var sfxOn = false, actx = null;
-  function sfxCtx() {
-    if (!actx) try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
-    return actx;
+  var sfxOn = false;
+  function player(src, vol, poolSize) {
+    var pool = [], i = 0;
+    for (var k = 0; k < (poolSize || 2); k++) {
+      var a = new Audio(src); a.preload = 'auto'; a.volume = vol; pool.push(a);
+    }
+    return function () {
+      if (!sfxOn) return;
+      var a = pool[i++ % pool.length];
+      a.currentTime = 0; a.play().catch(function () {});
+    };
   }
-  function blip(freq, dur, gain, type, delay) {
-    var c = sfxCtx(); if (!c || !sfxOn) return;
-    var t0 = c.currentTime + (delay || 0);
-    var o = c.createOscillator(), g = c.createGain();
-    o.type = type || 'sine'; o.frequency.setValueAtTime(freq, t0);
-    g.gain.setValueAtTime(0, t0);
-    g.gain.linearRampToValueAtTime(gain, t0 + 0.012);
-    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-    o.connect(g).connect(c.destination);
-    o.start(t0); o.stop(t0 + dur + 0.02);
-  }
-  function sfxTick() { blip(1180, 0.09, 0.05, 'triangle'); }          /* แตะปุ่ม */
-  function sfxChime() {                                                /* เปลี่ยนหน้า */
-    blip(1046.5, 0.28, 0.035, 'sine');
-    blip(1568, 0.34, 0.028, 'sine', 0.07);
-  }
+  var sfxTick = player('assets/sfx_tap.m4a', 0.5, 3);
+  var sfxChime = player('assets/sfx_page.m4a', 0.34, 2);
+  function sfxCtx() {}
   document.addEventListener('click', function (e) {
     if (e.target.closest('.btn,.seg button,.folio-dot,.gift-copy,#music')) sfxTick();
   }, true);
@@ -1285,7 +1285,7 @@ html.embed .folio{display:none}
     });
   }
   function startMusic() {
-    sfxOn = true; sfxCtx();
+    sfxOn = true;
     if (!audio) return;
     audio.play().then(function () {          /* เฟดเข้า 2 วิ นุ่มแบบงานจริง */
       var t = setInterval(function () {
