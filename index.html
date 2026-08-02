@@ -811,15 +811,16 @@ html.embed .folio{display:none}
 
   /* ── ลิงก์เชิญรายคน: ?to=ชื่อ&n=จำนวน&c=รหัส ────────────────────── */
   var GUEST = (Q.get('to') || '').trim();
+  var PRE = Q.has('p') ? (Q.get('p') || '').trim() : 'คุณ';   /* คำนำหน้า — บางคนเรียก พี่/ป้า/อาจารย์ */
   var SEATS = (Q.get('n') || '').trim();
   var CODE = Q.get('c') || '';
   var GMSG = (Q.get('m') || '').trim().slice(0, 140);
   if (GUEST) {
     var g = document.getElementById('guestHi');
-    if (g) { g.textContent = 'เรียน คุณ' + GUEST; g.hidden = false; }
+    if (g) { g.textContent = 'เรียน ' + PRE + GUEST; g.hidden = false; }
     /* หน้าน้องหมาน้องแมว: ทักชื่อแขกแทน "สวัสดีทุกคน" */
     var st = document.querySelector('#story .sect-title');
-    if (st) st.textContent = 'สวัสดี คุณ' + GUEST;
+    if (st) st.textContent = 'สวัสดี ' + PRE + GUEST;
     var gn = document.getElementById('gname');
     if (gn) gn.value = GUEST;
   }
