@@ -553,13 +553,17 @@ html.amb .sheen{background-image:linear-gradient(100deg,
 @keyframes pulse{0%,100%{opacity:.4;transform:scale(.97)}50%{opacity:1;transform:scale(1)}}
 /* โน้ตส่วนตัวใต้น้องหมาน้องแมว — กระซิบถึงแขกคนเดียว */
 .pet-note{position:relative;margin:20px auto 4px;max-width:320px;padding:16px 26px 14px;
-  font-family:var(--f-th);font-weight:300;font-size:.92rem;line-height:1.85;color:#6B4F2E;
+  font-family:var(--f-th);font-weight:300;font-size:.9rem;line-height:1.9;color:#8A6432;
   border-top:1px solid var(--gold-soft);border-bottom:1px solid var(--gold-soft)}
-.pet-note i{font-family:var(--f-display);font-style:italic;font-size:1.5em;
-  color:var(--gold);line-height:0;vertical-align:-.28em;padding:0 .18em}
-.pet-note b{display:block;font-weight:300;font-size:.85rem;margin-top:8px}
-.guest-hi{font-family:var(--f-th);font-weight:300;font-size:.95rem;color:var(--ink);
-          margin-bottom:16px;letter-spacing:.01em}
+.pet-note span{opacity:.95}
+.pet-note i{font-family:var(--f-display);font-style:italic;font-size:1.6em;
+  color:var(--gold);line-height:0;vertical-align:-.3em;padding:0 .2em;opacity:.85}
+.pet-note b{display:block;font-weight:300;font-size:.8rem;margin-top:9px;opacity:.8}
+.guest-hi{font-family:var(--f-th);font-weight:300;font-size:.95rem;color:#7A5C33;
+          margin-bottom:16px;letter-spacing:.02em;
+          text-shadow:0 1px 8px rgba(251,247,239,.85)}
+.guest-hi::before,.guest-hi::after{content:'·';color:var(--gold);opacity:.7;margin:0 .55em;
+          font-family:var(--f-display)}
 .btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .btn.sm{font-size:.6rem;padding:12px 18px}
 .btn.light{border-color:var(--gold-lit);color:var(--gold-lit)}
