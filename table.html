@@ -103,6 +103,9 @@ function byCode(c){
   fetch(EP+'?action=seat&code='+encodeURIComponent(c)).then(r=>r.json()).then(function(j){
     if(j.ok){
       out.innerHTML=cardHTML(j.name,j.table,j.seats,j.checkin);
+      /* สถานะยืนยันจากชีตชนะเครื่อง — เปิดมือถือเครื่องไหนก็เห็นตรงกัน */
+      if(j.reconfirm==='มาแน่นอน')localStorage.setItem('rc_'+CODE,'yes');
+      else if(j.reconfirm==='มีเปลี่ยนแปลง')localStorage.setItem('rc_'+CODE,'no');
       rc.innerHTML=rcHTML(); bindRC();
     }
     else{out.innerHTML='';find.hidden=false;
