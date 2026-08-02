@@ -214,11 +214,12 @@ section:has(.dec[data-spot="bottom"]){padding-bottom:215px}
 .film-cap span{display:block;color:#4A3520;
      text-shadow:0 0 26px rgba(255,250,240,.95),0 0 10px rgba(255,250,240,.9),
                  0 1px 3px rgba(255,255,255,.65)}
-.film-cap .fc-en{font-family:var(--f-sc);font-size:calc(var(--s2) * 1.02);
-     letter-spacing:.3em;text-indent:.3em;text-transform:uppercase;white-space:nowrap}
+.film-cap .fc-en{font-family:var(--f-sc);font-weight:500;font-size:calc(var(--s2) * 1.06);
+     letter-spacing:.3em;text-indent:.3em;text-transform:uppercase;white-space:nowrap;
+     text-shadow:0 0 .5px currentColor}
 .film-cap.cap-inline .fc-en,.film-cap.cap-inline .fc-th{display:inline;margin:0 .14em;vertical-align:baseline}
-.film-cap .fc-th{font-family:var(--f-script);font-size:calc(var(--s6) * .98);
-     line-height:1.18;margin-top:10px;color:#8A6432}
+.film-cap .fc-th{font-family:var(--f-script);font-size:calc(var(--s6) * 1.05);
+     line-height:1.18;margin-top:10px;color:#7A5327;text-shadow:0 0 .6px currentColor}
 .gate.film .dip{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;
      transition:opacity var(--dip-in,900ms) cubic-bezier(.4,0,.5,1)}
 .gate.film.dipping .dip{opacity:1}
@@ -552,16 +553,22 @@ html.amb .sheen{background-image:linear-gradient(100deg,
         text-align:center;margin-top:18px}
 @keyframes pulse{0%,100%{opacity:.4;transform:scale(.97)}50%{opacity:1;transform:scale(1)}}
 /* โน้ตส่วนตัวใต้น้องหมาน้องแมว — กระซิบถึงแขกคนเดียว */
-.pet-note{position:relative;margin:20px auto 4px;max-width:320px;padding:16px 26px 14px;
-  font-family:var(--f-th);font-weight:300;font-size:.92rem;line-height:1.9;color:#4A3320;
-  border-top:1px solid var(--gold-soft);border-bottom:1px solid var(--gold-soft)}
-.pet-note span{opacity:1}
-.pet-note i{font-family:var(--f-display);font-style:italic;font-size:1.6em;
-  color:var(--gold);line-height:0;vertical-align:-.3em;padding:0 .2em;opacity:.85}
-.pet-note b{display:block;font-weight:300;font-size:.8rem;margin-top:9px;opacity:.8}
-.guest-hi{font-family:var(--f-th);font-weight:300;font-size:.95rem;color:#7A5C33;
+.pet-note{position:relative;margin:24px auto 6px;max-width:300px;padding:15px 20px 12px;
+  font-family:var(--f-th);font-weight:400;font-size:.95rem;line-height:1.8;color:#3A2818;
+  background:rgba(253,251,246,.97);border:1px solid var(--gold-soft);border-radius:20px;
+  box-shadow:0 10px 26px rgba(120,90,50,.10)}
+/* หางบอลลูนชี้ขึ้นหาน้อง Spink (ฝั่งซ้าย) — สามเหลี่ยมสองชั้น เส้นขอบ+พื้น */
+.pet-note::before{content:'';position:absolute;top:-12px;left:25%;
+  border:solid transparent;border-width:0 10px 12px;
+  border-bottom-color:var(--gold-soft)}
+.pet-note::after{content:'';position:absolute;top:-10px;left:calc(25% + 1.5px);
+  border:solid transparent;border-width:0 8.5px 10.5px;
+  border-bottom-color:rgba(253,251,246,.98)}
+.pet-note .pn-sig{display:block;text-align:right;font-family:var(--f-script);
+  font-style:normal;font-size:1.15rem;color:var(--gold);margin-top:7px;line-height:1}
+.guest-hi{font-family:var(--f-th);font-weight:400;font-size:1.04rem;color:#4A3320;
           margin-bottom:16px;letter-spacing:.02em;
-          text-shadow:0 1px 8px rgba(251,247,239,.85)}
+          text-shadow:0 1px 10px rgba(251,247,239,.95)}
 .guest-hi::before,.guest-hi::after{content:'·';color:var(--gold);opacity:.7;margin:0 .55em;
           font-family:var(--f-display)}
 .btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
@@ -831,7 +838,7 @@ html.embed .folio{display:none}
     if (petHost) {
       var pn = document.createElement('div');
       pn.className = 'pet-note';
-      pn.innerHTML = '<i>\u201C</i><span></span><i>\u201D</i><b>\uD83E\uDD0D</b>';
+      pn.innerHTML = '<span></span><i class="pn-sig">\u2014 Spink \uD83D\uDC3E</i>';
       pn.querySelector('span').textContent = GMSG;
       petHost.parentNode.insertBefore(pn, petHost.nextSibling);
     }
