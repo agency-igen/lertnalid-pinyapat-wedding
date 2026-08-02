@@ -564,6 +564,8 @@ html.amb .sheen{background-image:linear-gradient(100deg,
 .pet-note::after{content:'';position:absolute;top:-10px;left:calc(25% + 1.5px);
   border:solid transparent;border-width:0 8.5px 10.5px;
   border-bottom-color:rgba(253,251,246,.98)}
+.pet-note.by-cat::before{left:auto;right:25%}
+.pet-note.by-cat::after{left:auto;right:calc(25% - 1.5px)}
 .pet-note .pn-sig{display:block;text-align:right;font-family:var(--f-script);
   font-style:normal;font-size:1.15rem;color:var(--gold);margin-top:7px;line-height:1}
 .guest-hi{font-family:var(--f-th);font-weight:400;font-size:1.04rem;color:#4A3320;
@@ -822,6 +824,7 @@ html.embed .folio{display:none}
   var SEATS = (Q.get('n') || '').trim();
   var CODE = Q.get('c') || '';
   var GMSG = (Q.get('m') || '').trim().slice(0, 140);
+  var GCAT = /^(sup|t|cat)$/i.test((Q.get('s') || '').trim());   /* ใครพูด: ว่าง=Spink · sup=ทรัพย์ */
   if (GUEST) {
     var g = document.getElementById('guestHi');
     if (g) { g.textContent = 'เรียน ' + PRE + GUEST; g.hidden = false; }
@@ -837,8 +840,10 @@ html.embed .folio{display:none}
                   document.querySelector('#story .ill-inline');
     if (petHost) {
       var pn = document.createElement('div');
-      pn.className = 'pet-note';
-      pn.innerHTML = '<span></span><i class="pn-sig">\u2014 Spink \uD83D\uDC3E</i>';
+      pn.className = 'pet-note' + (GCAT ? ' by-cat' : '');
+      pn.innerHTML = '<span></span><i class="pn-sig">\u2014 ' +
+                     (GCAT ? '\u0E17\u0E23\u0E31\u0E1E\u0E22\u0E4C' : 'Spink') +
+                     ' \uD83D\uDC3E</i>';
       pn.querySelector('span').textContent = GMSG;
       petHost.parentNode.insertBefore(pn, petHost.nextSibling);
     }
