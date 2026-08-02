@@ -201,6 +201,9 @@ section:has(.dec[data-spot="bottom"]){padding-bottom:215px}
 .hero-ill.vid{width:min(calc((100% + 60px) * var(--ivw,1)),calc(486px * var(--ivw,1)))}
 /* ── ฉากเปิดแบบวิดีโอเต็มจอ + จางเป็นขาว ── */
 .gate.film{background:var(--paper)}
+/* พอวิดีโอเริ่ม แถบทัก (เรียน คุณ… + TAP TO OPEN) ต้องหลบให้แคปชัน — เดิมตกหล่นเฉพาะแบบ film */
+.gate.film.playing .env-hint{opacity:0;transform:translateY(14px);
+  transition:opacity .5s ease,transform .5s ease;pointer-events:none}
 .gate.film .gate-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center bottom}
 .gate.film #introVid{opacity:0;transition:opacity .45s ease}
 .gate.film.playing #introVid{opacity:1}
@@ -802,7 +805,7 @@ html.embed .folio{display:none}
         Lertnalid &amp; Pinyapat · 12 · 09 · 2026</p></section>
   </div>
 </div>
-<script>var CFG = {"rsvpMode": "sheet", "rsvpEndpoint": "https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec", "lineUrl": "", "email": "hello@example.com", "musicUrl": "assets/music.mp3", "cardId": "lertnalid-pinyapat", "parallax": 0.045, "dust": false, "touchFx": true, "gateStyle": "film", "title": "Memory: Chapter Two — Lertnalid & Pinyapat", "venue": "Millennium Hilton Bangkok", "startISO": "2026-09-12T17:00:00+07:00"};</script>
+<script>var CFG = {"ginfo":"https://admin-production-ce9d.up.railway.app","rsvpMode": "sheet", "rsvpEndpoint": "https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec", "lineUrl": "", "email": "hello@example.com", "musicUrl": "assets/music.mp3", "cardId": "lertnalid-pinyapat", "parallax": 0.045, "dust": false, "touchFx": true, "gateStyle": "film", "title": "Memory: Chapter Two — Lertnalid & Pinyapat", "venue": "Millennium Hilton Bangkok", "startISO": "2026-09-12T17:00:00+07:00"};</script>
 <script>/* ─────────────────────────────────────────────────────────────────────
    Runtime ของการ์ด — ไฟล์เดียวใช้กับทุกการ์ด ไม่มีข้อมูลลูกค้าอยู่ในนี้
    ค่าเฉพาะการ์ดมาจาก window.CFG ที่ตัวเรนเดอร์ฉีดเข้ามา
@@ -812,39 +815,62 @@ html.embed .folio{display:none}
   var EMBED = document.documentElement.classList.contains('embed');
   var Q = new URLSearchParams(location.search);
 
-  /* ── ลิงก์เชิญรายคน: ?to=ชื่อ&n=จำนวน&c=รหัส ────────────────────── */
-  var GUEST = (Q.get('to') || '').trim();
-  var PRE = Q.has('p') ? (Q.get('p') || '').trim() : 'คุณ';   /* คำนำหน้า — บางคนเรียก พี่/ป้า/อาจารย์ */
-  var SEATS = (Q.get('n') || '').trim();
-  var CODE = Q.get('c') || '';
-  var GMSG = (Q.get('m') || '').trim().slice(0, 140);
-  var GCAT = /^(sup|t|cat)$/i.test((Q.get('s') || '').trim());   /* ใครพูด: ว่าง=Spink · sup=ทรัพย์ */
-  if (GUEST) {
-    var g = document.getElementById('guestHi');
-    if (g) { g.textContent = 'เรียน ' + PRE + GUEST; g.hidden = false; }
-    /* หน้าน้องหมาน้องแมว: ทักชื่อแขกแทน "สวัสดีทุกคน" */
-    var st = document.querySelector('#story .sect-title');
-    if (st) st.textContent = 'สวัสดี ' + PRE + GUEST;
-    var gn = document.getElementById('gname');
-    if (gn) gn.value = GUEST;
-  }
-  /* โน้ตส่วนตัวถึงแขกคนนี้ — แทรกใต้น้องหมาน้องแมว (หน้า "สวัสดีทุกคน") */
-  if (GMSG) {
-    var petHost = document.querySelector('#story .ill-labels') ||
-                  document.querySelector('#story .ill-inline');
-    if (petHost) {
-      var pn = document.createElement('div');
-      pn.className = 'pet-note' + (GCAT ? ' by-cat' : '');
-      pn.innerHTML = '<span></span><i class="pn-sig">\u2014 ' +
-                     (GCAT ? '\u0E17\u0E23\u0E31\u0E1E\u0E22\u0E4C' : 'Spink') +
-                     ' \uD83D\uDC3E</i>';
-      pn.querySelector('span').textContent = GMSG;
-      petHost.parentNode.insertBefore(pn, petHost.nextSibling);
+  /* ── ลิงก์เชิญรายคน ───────────────────────────────────────────────
+     แบบสั้น ?c=SL-XXXX (ทน LINE ตัดลิงก์ตรงอักษรไทย) → ดึงชื่อ/ข้อความจากเซิร์ฟเวอร์
+     แบบยาว ?to=&p=&m=&s= ยังใช้ได้ — ขึ้นทันทีก่อน แล้วข้อมูลเซิร์ฟเวอร์ค่อยมาทับ */
+  var CODE = (Q.get('c') || '').trim();
+  var G = {
+    name: (Q.get('to') || '').trim(),
+    pre: Q.has('p') ? (Q.get('p') || '').trim() : 'คุณ',
+    msg: (Q.get('m') || '').trim().slice(0, 140),
+    cat: /^(sup|t|cat)$/i.test((Q.get('s') || '').trim()),
+    seats: (Q.get('n') || '').trim()
+  };
+  var PRESEATS = '';
+  function applyGuest() {
+    PRESEATS = (String(G.seats) === '2') ? '2' : (String(G.seats) === '1' ? '1' : '');
+    if (G.name) {
+      var g = document.getElementById('guestHi');
+      if (g) { g.textContent = 'เรียน ' + G.pre + G.name; g.hidden = false; }
+      var st = document.querySelector('#story .sect-title');
+      if (st) st.textContent = 'สวัสดี ' + G.pre + G.name;
+      var gn = document.getElementById('gname');
+      if (gn && !gn.value) gn.value = G.name;
+    }
+    var oldNote = document.querySelector('#story .pet-note');
+    if (oldNote) oldNote.remove();
+    if (G.msg) {
+      var petHost = document.querySelector('#story .ill-labels') ||
+                    document.querySelector('#story .ill-inline');
+      if (petHost) {
+        var pn = document.createElement('div');
+        pn.className = 'pet-note' + (G.cat ? ' by-cat' : '');
+        pn.innerHTML = '<span></span><i class="pn-sig">\u2014 ' +
+                       (G.cat ? '\u0E17\u0E23\u0E31\u0E1E\u0E22\u0E4C' : 'Spink') +
+                       ' \uD83D\uDC3E</i>';
+        pn.querySelector('span').textContent = G.msg;
+        petHost.parentNode.insertBefore(pn, petHost.nextSibling);
+      }
     }
   }
+  applyGuest();
+  /* ดึงข้อมูลจริงจากเซิร์ฟเวอร์ — ลิงก์ที่โดนแอปแชทตัดพารามิเตอร์ไทยทิ้งก็ยังครบ */
+  if (CODE && CFG.ginfo) {
+    fetch(CFG.ginfo + '/api/ginfo?c=' + encodeURIComponent(CODE))
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (!j || !j.ok) return;
+        G.name = j.name || G.name;
+        G.pre = (j.pre === '-') ? '' : (j.pre || G.pre);
+        G.msg = (j.msg || '').slice(0, 140);
+        G.cat = j.by === 'sup';
+        G.seats = j.seats || G.seats;
+        applyGuest();
+      }).catch(function () {});
+  }
+  var GUEST = G.name;
 
-  /* จำนวนจากลิงก์เชิญ — กดปุ่ม "มา 2 ท่าน" ให้เองเมื่อฟอร์มโผล่ */
-  var PRESEATS = (SEATS === '2') ? '2' : (SEATS === '1' ? '1' : '');
+
 
   /* ── แผ่นโหลด ─────────────────────────────────────────────────── */
   addEventListener('load', function () {
