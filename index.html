@@ -250,6 +250,7 @@ section:has(.dec[data-spot="bottom"]){padding-bottom:215px}
      margin:0 auto;gap:14px;max-width:92%}
 .ill-labels span{font-family:'Great Vibes','Parisienne','Kanit',cursive;
      font-size:1.5rem;line-height:1.3;color:var(--gold);letter-spacing:.02em}
+.ill-labels span:first-child{font-size:1.95rem}
 .ill-labels span:empty{display:none}
 /* แผนที่วาดในหน้าสถานที่ — กรอบทอง แตะเปิดแมพ */
 .vmap video{width:100%;display:block;border-radius:12px;border:1px solid rgba(178,141,87,.45);
@@ -322,16 +323,17 @@ section:has(.dec[data-spot="bottom"]){padding-bottom:215px}
 .gift-env{cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none}
 .ge-img{width:min(320px,82%);margin:16px auto 0;display:block;mix-blend-mode:multiply;
   transition:transform .7s cubic-bezier(.3,.7,.3,1),opacity .7s ease;
-  transform-origin:50% 62%;animation:ge-nudge 3.2s ease-in-out 1.4s infinite}
+  transform-origin:50% 62%}
+.ge-img.nudge{animation:ge-nudge .95s ease-in-out}
 /* เขย่าเบา ๆ เป็นจังหวะ — ชวนให้แตะ ไม่สั่นตลอดจนรำคาญ */
 @keyframes ge-nudge{
-  0%,72%,100%{transform:rotate(0)}
-  75%{transform:rotate(-3.2deg) scale(1.015)}
-  79%{transform:rotate(2.7deg) scale(1.015)}
-  83%{transform:rotate(-2deg)}
-  87%{transform:rotate(1.4deg)}
-  91%{transform:rotate(-.7deg)}
-  95%{transform:rotate(.3deg)}
+  0%,100%{transform:rotate(0)}
+  14%{transform:rotate(-3.2deg) scale(1.015)}
+  32%{transform:rotate(2.7deg) scale(1.015)}
+  50%{transform:rotate(-2deg)}
+  66%{transform:rotate(1.4deg)}
+  82%{transform:rotate(-.7deg)}
+  93%{transform:rotate(.3deg)}
 }
 @media (prefers-reduced-motion:reduce){.ge-img{animation:none}}
 .gift-env:active .ge-img{transform:scale(.97)}
@@ -1312,6 +1314,20 @@ html.embed .folio{display:none}
     ge.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); geOpen(); }
     });
+    /* ดุกดิกเป็นจังหวะตลอดเวลา — JS สั่งเองทีละรอบ เชื่อถือได้กว่า animation ยาว ๆ */
+    var geImg = ge.querySelector('.ge-img');
+    if (geImg && !reduce) {
+      geImg.addEventListener('animationend', function () { geImg.classList.remove('nudge'); });
+      var geNudge = function () {
+        var w = document.getElementById('giftEnvWrap');
+        if (w && w.classList.contains('open')) return;   /* เปิดอยู่ ไม่ต้องดุกดิก */
+        geImg.classList.remove('nudge');
+        void geImg.offsetWidth;                          /* บังคับรีเซ็ตก่อนเล่นซ้ำ */
+        geImg.classList.add('nudge');
+      };
+      setTimeout(geNudge, 1200);
+      setInterval(geNudge, 2800);
+    }
     var geClose = function () {
       var w = document.getElementById('giftEnvWrap');
       var rv = document.getElementById('giftReveal');
