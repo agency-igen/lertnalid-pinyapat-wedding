@@ -321,11 +321,23 @@ section:has(.dec[data-spot="bottom"]){padding-bottom:215px}
 .gew-in{overflow:hidden;min-height:0}
 .gift-env{cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none}
 .ge-img{width:min(320px,82%);margin:16px auto 0;display:block;mix-blend-mode:multiply;
-  transition:transform .7s cubic-bezier(.3,.7,.3,1),opacity .7s ease}
+  transition:transform .7s cubic-bezier(.3,.7,.3,1),opacity .7s ease;
+  transform-origin:50% 62%;animation:ge-nudge 5.4s ease-in-out 2.2s infinite}
+/* เขย่าเบา ๆ เป็นจังหวะ — ชวนให้แตะ ไม่สั่นตลอดจนรำคาญ */
+@keyframes ge-nudge{
+  0%,84%,100%{transform:rotate(0)}
+  86%{transform:rotate(-2.6deg) scale(1.012)}
+  88.5%{transform:rotate(2.1deg) scale(1.012)}
+  91%{transform:rotate(-1.5deg)}
+  93.5%{transform:rotate(1deg)}
+  96%{transform:rotate(-.45deg)}
+  98%{transform:rotate(.2deg)}
+}
+@media (prefers-reduced-motion:reduce){.ge-img{animation:none}}
 .gift-env:active .ge-img{transform:scale(.97)}
-.gift-envwrap.open .ge-img{transform:translateY(22px) scale(.94);opacity:0}
-.ge-hint{font-family:var(--f-sc);font-size:.6rem;letter-spacing:.3em;text-indent:.3em;
-  color:var(--ink-soft);margin:10px 0 6px;transition:opacity .5s}
+.gift-envwrap.open .ge-img{animation:none;transform:translateY(22px) scale(.94);opacity:0}
+.ge-hint{font-family:var(--f-sc);font-size:.82rem;letter-spacing:.3em;text-indent:.3em;
+  color:#7A5C33;margin:12px 0 6px;transition:opacity .5s}
 .gift-envwrap.open .ge-hint{opacity:0}
 .gift-reveal{display:grid;grid-template-rows:0fr;transition:grid-template-rows .95s cubic-bezier(.25,.8,.3,1)}
 .gift-reveal .gr-in{overflow:hidden;min-height:0}
