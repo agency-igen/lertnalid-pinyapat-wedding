@@ -1553,17 +1553,22 @@ html.embed .folio{display:none}
   /* iOS ให้สิทธิ์เล่นเฉพาะคลิปที่ "เคยเล่นตอนผู้ใช้แตะ" — จังหวะแตะเปิดซอง
      จึงต้องแตะปลุกทุกคลิปไว้ก่อน ไม่งั้นพอเลื่อนถึงจะสั่งเล่นไม่ได้ ต้องจิ้มเอง */
   function primeVideos() {
-    [].forEach.call(document.querySelectorAll('video'), function (v) {
-      if (v.id === 'introVid') return;                 /* คลิปเปิดซองเล่นเองอยู่แล้ว */
+    /* ปลุกเฉพาะคลิปที่ตัวเฝ้าจอ (data-lazy) ดูแล — คลิปอิสระอย่างบ่าวสาวหน้าปก
+       เล่นวนเองด้วย autoplay อยู่แล้ว ถ้าไปสั่งหยุดจะไม่มีใครมาสั่งเล่นซ้ำ ค้างนิ่งถาวร */
+    [].forEach.call(document.querySelectorAll('video[data-lazy]'), function (v) {
       try {
         v.muted = true;
         var pr = v.play();
         if (pr && pr.then) pr.then(function () {
-          /* ปลุกแล้วหยุดไว้ก่อน — เดี๋ยวตัวเฝ้าจอค่อยสั่งเล่นตอนเลื่อนถึง */
-          if (!v.hasAttribute('data-keep')) { v.pause(); v.currentTime = 0; }
+          v.pause(); v.currentTime = 0;      /* เดี๋ยวตัวเฝ้าจอสั่งเล่นเองตอนเลื่อนถึง */
         }).catch(function () {});
       } catch (e) {}
     });
+    /* คลิปอิสระตัวไหนโดนเบราว์เซอร์บล็อกไว้ ก็ถือโอกาสจังหวะแตะนี้สั่งเล่นเลย */
+    [].forEach.call(document.querySelectorAll('video[autoplay]:not([data-lazy])'),
+      function (v) {
+        if (v.paused) { try { v.play().catch(function () {}); } catch (e) {} }
+      });
   }
 
   function primeSfx() {                      /* เล่นเงียบ 1 ติ๊กในจังหวะแตะ = ปลดล็อกถาวร */
