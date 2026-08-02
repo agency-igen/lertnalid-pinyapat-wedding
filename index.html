@@ -551,6 +551,13 @@ html.amb .sheen{background-image:linear-gradient(100deg,
 .loader-t{font-family:var(--f-th);font-weight:300;font-size:.78rem;color:var(--ink-soft);
         text-align:center;margin-top:18px}
 @keyframes pulse{0%,100%{opacity:.4;transform:scale(.97)}50%{opacity:1;transform:scale(1)}}
+/* โน้ตส่วนตัวใต้น้องหมาน้องแมว — กระซิบถึงแขกคนเดียว */
+.pet-note{position:relative;margin:20px auto 4px;max-width:320px;padding:16px 26px 14px;
+  font-family:var(--f-th);font-weight:300;font-size:.92rem;line-height:1.85;color:#6B4F2E;
+  border-top:1px solid var(--gold-soft);border-bottom:1px solid var(--gold-soft)}
+.pet-note i{font-family:var(--f-display);font-style:italic;font-size:1.5em;
+  color:var(--gold);line-height:0;vertical-align:-.28em;padding:0 .18em}
+.pet-note b{display:block;font-weight:300;font-size:.85rem;margin-top:8px}
 .guest-hi{font-family:var(--f-th);font-weight:300;font-size:.95rem;color:var(--ink);
           margin-bottom:16px;letter-spacing:.01em}
 .btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
@@ -802,12 +809,29 @@ html.embed .folio{display:none}
   var GUEST = (Q.get('to') || '').trim();
   var SEATS = (Q.get('n') || '').trim();
   var CODE = Q.get('c') || '';
+  var GMSG = (Q.get('m') || '').trim().slice(0, 140);
   if (GUEST) {
     var g = document.getElementById('guestHi');
     if (g) { g.textContent = 'เรียน คุณ' + GUEST; g.hidden = false; }
+    /* หน้าน้องหมาน้องแมว: ทักชื่อแขกแทน "สวัสดีทุกคน" */
+    var st = document.querySelector('#story .sect-title');
+    if (st) st.textContent = 'สวัสดี คุณ' + GUEST;
     var gn = document.getElementById('gname');
     if (gn) gn.value = GUEST;
   }
+  /* โน้ตส่วนตัวถึงแขกคนนี้ — แทรกใต้น้องหมาน้องแมว (หน้า "สวัสดีทุกคน") */
+  if (GMSG) {
+    var petHost = document.querySelector('#story .ill-labels') ||
+                  document.querySelector('#story .ill-inline');
+    if (petHost) {
+      var pn = document.createElement('div');
+      pn.className = 'pet-note';
+      pn.innerHTML = '<i>\u201C</i><span></span><i>\u201D</i><b>\uD83E\uDD0D</b>';
+      pn.querySelector('span').textContent = GMSG;
+      petHost.parentNode.insertBefore(pn, petHost.nextSibling);
+    }
+  }
+
   /* จำนวนจากลิงก์เชิญ — กดปุ่ม "มา 2 ท่าน" ให้เองเมื่อฟอร์มโผล่ */
   var PRESEATS = (SEATS === '2') ? '2' : (SEATS === '1' ? '1' : '');
 
