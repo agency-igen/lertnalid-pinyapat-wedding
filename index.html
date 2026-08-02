@@ -1019,9 +1019,14 @@ html.embed .folio{display:none}
       var caps = [].slice.call(gate.querySelectorAll('.film-cap'));
       vid.addEventListener('timeupdate', function () {
         var t = vid.currentTime;
-        for (var ci = 0; ci < caps.length; ci++) {          /* ข้อความตามเวลาที่ตั้งไว้ */
+        /* โชว์ทีละแคปชันเสมอ — ช่วงเวลาที่ตั้งในหลังบ้านคาบเกี่ยวกันก็ไม่ซ้อน (อันหลังชนะ) */
+        var active = -1;
+        for (var ci = 0; ci < caps.length; ci++) {
           var c = caps[ci], at = +c.dataset.at, hold = +c.dataset.hold;
-          c.classList.toggle('show', t >= at && t < at + hold);
+          if (t >= at && t < at + hold) active = ci;
+        }
+        for (ci = 0; ci < caps.length; ci++) {
+          caps[ci].classList.toggle('show', ci === active);
         }
         /* เริ่มจางขาวก่อนคลิปจบพอดี รอยต่อจะไม่สะดุด */
         if (vid.duration && vid.currentTime > vid.duration - DIP_IN / 1000) toWhite();
@@ -1605,13 +1610,17 @@ html.embed .folio{display:none}
 
   function primeSfx() {                      /* เล่นเงียบ 1 ติ๊กในจังหวะแตะ = ปลดล็อกถาวร */
     _sfxAll.forEach(function (a) {
+      var v0 = a.volume;
+      var back = function () { a.muted = false; a.volume = v0; };
       try {
         a.muted = true;
+        a.volume = 0;                        /* กันเครื่องที่ mute ไม่ทันแล้วเสียงเล็ดตอนแตะเปิด */
         var pr = a.play();
         if (pr) pr.then(function () {
-          a.pause(); a.currentTime = 0; a.muted = false;
-        }).catch(function () { a.muted = false; });
-      } catch (e) { a.muted = false; }
+          a.pause(); a.currentTime = 0; back();
+        }).catch(back);
+        else back();
+      } catch (e) { back(); }
     });
   }
   var sfxTick = player('assets/sfx_tap.m4a', 0.5, 3);
@@ -1632,12 +1641,18 @@ html.embed .folio{display:none}
 
   /* เสียงน้องหมาน้องแมว — ดังทุกครั้งที่เลื่อนมาถึง (กันยิงรัวใน 1.2 วิ) */
   var lastPets = 0;
+  var petsArmed = false;                     /* ดังได้หลังแขกเริ่มเลื่อนจริงเท่านั้น */
+  STGT.addEventListener('scroll', function armPets() {
+    petsArmed = true;
+    STGT.removeEventListener('scroll', armPets);
+  }, { passive: true });
   var petsEl = document.querySelector('#story .ill-inline');
   if (petsEl) {
     new IntersectionObserver(function (es) {
       es.forEach(function (e) {
         if (!e.isIntersecting || !sfxOn) return;
         var now = Date.now();
+        if (!petsArmed) return;
         if (now - lastPets < 1200) return;
         lastPets = now;
         sfxWoof();
