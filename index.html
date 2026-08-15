@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="bv" content="802cef0a2e">
+<meta name="bv" content="3086b15fef">
 <title>Memory: Chapter Two — Lertnalid &amp; Pinyapat</title>
 <meta name="description" content="ขอเรียนเชิญร่วมเป็นเกียรติในพิธีมงคลสมรส Lertnalid &amp; Pinyapat · วันเสาร์ที่ 12 กันยายน 2569 เวลา 17.00 น. · Grand Ballroom, Millennium Hilton Bangkok">
 <meta property="og:type" content="website">
@@ -796,11 +796,14 @@ html.embed .folio{display:none}
         <div><label>การตอบรับ · YOUR REPLY</label>
           <div class="seg seg-att" role="group"><button type="button" data-att="yes" aria-pressed="false">ไปร่วมงานด้วยความยินดี<i class="en-sub">Joyfully accept</i></button><button type="button" data-att="no" aria-pressed="false">ขออภัย ไม่สะดวกเข้าร่วม<i class="en-sub">Regretfully decline</i></button></div></div>
         <div id="yesExtra"><div class="yx-in">
-        
+        <div id="seatsBlock"><label>จำนวนผู้ร่วมงาน · GUESTS</label>
+          <div class="seg seg-cnt" role="group"><button type="button" data-cnt="1" aria-pressed="true">มา 1 ท่าน<i class="en-sub">Just me</i></button><button type="button" data-cnt="2" aria-pressed="false">มา 2 ท่าน<i class="en-sub">With a guest</i></button></div>
+          <p class="form-warn">นำแขกเพิ่มได้ไม่เกิน 1 ท่าน · แขกที่ไม่มีรายชื่อจะไม่มีโต๊ะที่นั่ง<br><i class="en-line">Up to 1 extra guest · unlisted guests won't have seats</i></p></div>
         <div id="g2wrap" hidden><label for="gname2">ชื่อ-นามสกุล ผู้ติดตาม · GUEST NAMES</label>
           <input id="gname2" name="gname2" autocomplete="off"
                  placeholder="ระบุชื่อจริงเพื่อจัดโต๊ะที่นั่ง · Full name for seating"></div>
-        
+        <div><label>รูปแบบอาหารที่สะดวก · MEAL PREFERENCE</label>
+          <div class="seg seg-food" role="group"><button type="button" data-food="คอร์ส" aria-pressed="true">อาหารคอร์ส<i class="en-sub">Course menu</i></button><button type="button" data-food="บุฟเฟต์" aria-pressed="false">บุฟเฟต์<i class="en-sub">Buffet</i></button></div></div>
         <div><label for="gdiet">อาหารที่ไม่ทาน / แพ้อาหาร (ถ้ามี) · DIETARY NOTES</label>
           <input id="gdiet" name="gdiet" placeholder="เช่น แพ้กุ้ง · Vegetarian · No pork"></div>
         </div></div>
@@ -839,7 +842,7 @@ html.embed .folio{display:none}
         Lertnalid &amp; Pinyapat · 12 · 09 · 2026</p></section>
   </div>
 </div>
-<script>var CFG = {"bv": "802cef0a2e", "rsvpMode": "sheet", "rsvpEndpoint": "https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec", "lineUrl": "", "email": "hello@example.com", "musicUrl": "assets/music.mp3?v=1785579325", "cardId": "lertnalid-pinyapat", "parallax": 0.045, "dust": false, "touchFx": true, "gateStyle": "film", "title": "Memory: Chapter Two — Lertnalid & Pinyapat", "venue": "Millennium Hilton Bangkok", "startISO": "2026-09-12T17:00:00+07:00", "qrTitle": "Song & Lingling Wedding", "ginfo": "https://admin-production-ce9d.up.railway.app"};</script>
+<script>var CFG = {"bv": "3086b15fef", "rsvpMode": "sheet", "rsvpEndpoint": "https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec", "lineUrl": "", "email": "hello@example.com", "musicUrl": "assets/music.mp3?v=1785579325", "cardId": "lertnalid-pinyapat", "parallax": 0.045, "dust": false, "touchFx": true, "gateStyle": "film", "title": "Memory: Chapter Two — Lertnalid & Pinyapat", "venue": "Millennium Hilton Bangkok", "startISO": "2026-09-12T17:00:00+07:00", "qrTitle": "Song & Lingling Wedding", "ginfo": "https://admin-production-ce9d.up.railway.app"};</script>
 <script>/* ─────────────────────────────────────────────────────────────────────
    Runtime ของการ์ด — ไฟล์เดียวใช้กับทุกการ์ด ไม่มีข้อมูลลูกค้าอยู่ในนี้
    ค่าเฉพาะการ์ดมาจาก window.CFG ที่ตัวเรนเดอร์ฉีดเข้ามา
@@ -861,9 +864,11 @@ html.embed .folio{display:none}
     seats: (Q.get('n') || '').trim()
   };
   var PRESEATS = '';
+  var SEATSFORM = null;      /* ตัวปรับฟอร์มตามที่นั่งเชิญ — ผูกไว้ตอนสร้างฟอร์ม RSVP */
   function applyGuest() {
     var ps = parseInt(G.seats, 10);           /* รับจำนวนใดก็ได้ที่มีปุ่มรองรับจริง */
     PRESEATS = (ps > 0 && ps < 100) ? String(ps) : '';
+    if (SEATSFORM) SEATSFORM();               /* ginfo มาช้ากว่าเปิดหน้า — ปรับซ้ำได้เสมอ */
     if (G.name) {
       var g = document.getElementById('guestHi');
       if (g) { g.textContent = 'เรียน ' + G.pre + G.name; g.hidden = false; }
@@ -1280,13 +1285,31 @@ html.embed .folio{display:none}
     if (w2) w2.hidden = !(att === 'yes' && needG2());
   });
   segBind('.seg-food', function (b) { food = b.dataset.food; });
-  if (PRESEATS && document.querySelector(
-        '.seg-cnt button[data-cnt="' + PRESEATS + '"]')) {
-    cnt = PRESEATS;                           /* ลิงก์แขกล็อกจำนวนได้เฉพาะที่มีปุ่มจริง */
-    document.querySelectorAll('.seg-cnt button').forEach(function (x) {
-      x.setAttribute('aria-pressed', x.dataset.cnt === PRESEATS ? 'true' : 'false');
-    });
+  /* ── ฟอร์มสองแบบตามที่นั่งที่เชิญของแขกแต่ละคน ─────────────────
+     เชิญ 1 ที่นั่ง → ซ่อนคำถามจำนวนทั้งช่อง (มาคนเดียว ไม่มีตัวเลือก)
+     เชิญ 2 ที่นั่งขึ้นไป → โชว์ตัวเลือกและกดเลือกจำนวนที่เชิญไว้ให้ก่อน
+     เรียกซ้ำได้ทุกจังหวะ: ตอนเปิดหน้า (n= ในลิงก์) และตอน ginfo ตอบกลับ */
+  function applySeatsForm() {
+    var sb = document.getElementById('seatsBlock');
+    var w2 = document.getElementById('g2wrap');
+    if (PRESEATS === '1') {
+      cnt = '1';
+      if (sb) sb.hidden = true;
+      if (w2) w2.hidden = true;
+      return;
+    }
+    if (sb) sb.hidden = false;
+    if (PRESEATS && document.querySelector(
+          '.seg-cnt button[data-cnt="' + PRESEATS + '"]')) {
+      cnt = PRESEATS;                         /* ล็อกจำนวนได้เฉพาะที่มีปุ่มจริง */
+      document.querySelectorAll('.seg-cnt button').forEach(function (x) {
+        x.setAttribute('aria-pressed', x.dataset.cnt === PRESEATS ? 'true' : 'false');
+      });
+    }
+    if (w2) w2.hidden = !(att === 'yes' && needG2());
   }
+  SEATSFORM = applySeatsForm;
+  applySeatsForm();
   segBind('.seg-cnt', function (b) {
     cnt = b.dataset.cnt;
     var w = document.getElementById('g2wrap');
