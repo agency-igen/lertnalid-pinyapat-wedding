@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="bv" content="77139d95e7">
+<meta name="bv" content="a48bbadf42">
 <title>Memory: Chapter Two — Lertnalid &amp; Pinyapat</title>
 <meta name="description" content="ขอเรียนเชิญร่วมเป็นเกียรติในพิธีมงคลสมรส Lertnalid &amp; Pinyapat · วันเสาร์ที่ 12 กันยายน 2569 เวลา 17.00 น. · Grand Ballroom, Millennium Hilton Bangkok">
 <meta property="og:type" content="website">
@@ -841,7 +841,7 @@ html.embed .folio{display:none}
         Song &amp; Lingling · 12 · 09 · 2026</p></section>
   </div>
 </div>
-<script>var CFG = {"bv": "77139d95e7", "rsvpMode": "sheet", "rsvpEndpoint": "https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec", "lineUrl": "", "email": "hello@example.com", "musicUrl": "assets/music.mp3?v=1785579325", "cardId": "lertnalid-pinyapat", "parallax": 0.045, "dust": false, "touchFx": true, "gateStyle": "film", "title": "Memory: Chapter Two — Lertnalid & Pinyapat", "venue": "Millennium Hilton Bangkok", "startISO": "2026-09-12T17:00:00+07:00", "qrTitle": "Song & Lingling Wedding", "ginfo": "https://admin-production-ce9d.up.railway.app"};</script>
+<script>var CFG = {"bv": "a48bbadf42", "rsvpMode": "sheet", "rsvpEndpoint": "https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec", "lineUrl": "", "email": "hello@example.com", "musicUrl": "assets/music.mp3?v=1785579325", "cardId": "lertnalid-pinyapat", "parallax": 0.045, "dust": false, "touchFx": true, "gateStyle": "film", "title": "Memory: Chapter Two — Lertnalid & Pinyapat", "venue": "Millennium Hilton Bangkok", "startISO": "2026-09-12T17:00:00+07:00", "qrTitle": "Song & Lingling Wedding", "ginfo": "https://admin-production-ce9d.up.railway.app"};</script>
 <script>/* ─────────────────────────────────────────────────────────────────────
    Runtime ของการ์ด — ไฟล์เดียวใช้กับทุกการ์ด ไม่มีข้อมูลลูกค้าอยู่ในนี้
    ค่าเฉพาะการ์ดมาจาก window.CFG ที่ตัวเรนเดอร์ฉีดเข้ามา
@@ -1286,7 +1286,8 @@ html.embed .folio{display:none}
   segBind('.seg-food', function (b) { food = b.dataset.food; });
   /* ── ฟอร์มสองแบบตามที่นั่งที่เชิญของแขกแต่ละคน ─────────────────
      เชิญ 1 ที่นั่ง → ซ่อนคำถามจำนวนทั้งช่อง (มาคนเดียว ไม่มีตัวเลือก)
-     เชิญ 2 ที่นั่งขึ้นไป → โชว์ตัวเลือกและกดเลือกจำนวนที่เชิญไว้ให้ก่อน
+     เชิญ 2 ที่นั่งขึ้นไป → โชว์ตัวเลือก แต่ค่าเริ่มต้นค้างที่ "มา 1 ท่าน" เสมอ
+     (จำนวนที่เชิญคือเพดานสิทธิ์ ไม่ใช่คำตอบล่วงหน้า — แขกกดเลือกเองถ้าพาคู่)
      เรียกซ้ำได้ทุกจังหวะ: ตอนเปิดหน้า (n= ในลิงก์) และตอน ginfo ตอบกลับ */
   function applySeatsForm() {
     var sb = document.getElementById('seatsBlock');
@@ -1298,13 +1299,6 @@ html.embed .folio{display:none}
       return;
     }
     if (sb) sb.hidden = false;
-    if (PRESEATS && document.querySelector(
-          '.seg-cnt button[data-cnt="' + PRESEATS + '"]')) {
-      cnt = PRESEATS;                         /* ล็อกจำนวนได้เฉพาะที่มีปุ่มจริง */
-      document.querySelectorAll('.seg-cnt button').forEach(function (x) {
-        x.setAttribute('aria-pressed', x.dataset.cnt === PRESEATS ? 'true' : 'false');
-      });
-    }
     if (w2) w2.hidden = !(att === 'yes' && needG2());
   }
   SEATSFORM = applySeatsForm;
