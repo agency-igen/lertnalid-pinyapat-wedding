@@ -31,6 +31,8 @@ button{font:inherit;font-size:.82rem;margin-top:10px;padding:11px 22px;border:1p
      display:flex;justify-content:space-between;align-items:center;gap:10px}
 .hit b{font-weight:400;font-size:.9rem}
 .hit span{font-family:Georgia,serif;color:#7A5C33;font-size:1.05rem;white-space:nowrap}
+.roster{white-space:pre-line;text-align:left;display:inline-block;margin-top:14px;
+     font-size:.82rem;line-height:1.8;color:#5A4630;border-top:1px solid #E4D8C2;padding-top:12px}
 .note{font-size:.66rem;color:#B0A28C;margin-top:26px;line-height:1.8}
 /* ── ยืนยันรอบสอง ── */
 .rc-head{font-size:.62rem;letter-spacing:.26em;color:#9A876B;text-transform:uppercase;text-indent:.26em}
@@ -57,12 +59,25 @@ button{font:inherit;font-size:.82rem;margin-top:10px;padding:11px 22px;border:1p
 var EP='https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec';
 var out=document.getElementById('out'), find=document.getElementById('find'), rc=document.getElementById('rc');
 var CODE='';
-function cardHTML(name,table,seats,checkin){
-  var t=table?('<p class="tbl">'+table+'<small>โต๊ะของคุณ · YOUR TABLE</small></p>')
+function esc(x){return String(x==null?'':x).replace(/[<>&"]/g,function(c){
+  return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];});}
+/* รายชื่อรายคนจากชีต — ยังไม่มีคอลัมน์นี้ก็คืนค่าว่าง การ์ดเหมือนเดิม */
+function roster(j){
+  if(j.guestsText) return String(j.guestsText);
+  var g=j.guests;
+  if(typeof g==='string'){ try{g=JSON.parse(g);}catch(e){return g;} }
+  if(!Array.isArray(g)||!g.length) return '';
+  return g.map(function(p,i){
+    return (i+1)+'. '+(p.n||p.name||'-')+((p.d||p.diet)?' ('+(p.d||p.diet)+')':'');
+  }).join('\n');
+}
+function cardHTML(name,table,seats,checkin,list){
+  var t=table?('<p class="tbl">'+esc(table)+'<small>โต๊ะของคุณ · YOUR TABLE</small></p>')
              :('<p class="wait">ทีมงานกำลังจัดผังที่นั่ง 🤍<br>กรุณาเปิดดูอีกครั้งใกล้วันงาน หรือสอบถามที่จุดลงทะเบียน'+
                '<span class="en">Seating is being arranged — please check back closer to the day</span></p>');
-  return '<div class="card"><p class="lbl">Guest</p><p class="name">'+name+'</p>'+t+
-    (seats?'<p class="seats">'+seats+' ที่นั่ง · seats'+(checkin?' · เช็คอินแล้ว '+checkin:'')+'</p>':'')+'</div>';
+  return '<div class="card"><p class="lbl">Guest</p><p class="name">'+esc(name)+'</p>'+t+
+    (seats?'<p class="seats">'+esc(seats)+' ที่นั่ง · seats'+(checkin?' · เช็คอินแล้ว '+esc(checkin):'')+'</p>':'')+
+    (list?'<p class="roster">'+esc(list)+'</p>':'')+'</div>';
 }
 /* ── ยืนยันการมาร่วมงานรอบสอง (จากลิงก์/QR ส่วนตัว) ── */
 function rcHTML(){
@@ -102,7 +117,7 @@ function byCode(c){
   out.innerHTML='<div class="card"><p class="wait">กำลังค้นหา… · Searching…</p></div>';
   fetch(EP+'?action=seat&code='+encodeURIComponent(c)).then(r=>r.json()).then(function(j){
     if(j.ok){
-      out.innerHTML=cardHTML(j.name,j.table,j.seats,j.checkin);
+      out.innerHTML=cardHTML(j.name,j.table,j.seats,j.checkin,roster(j));
       /* สถานะยืนยันจากชีตชนะเครื่อง — เปิดมือถือเครื่องไหนก็เห็นตรงกัน */
       if(j.reconfirm==='มาแน่นอน')localStorage.setItem('rc_'+CODE,'yes');
       else if(j.reconfirm==='มีเปลี่ยนแปลง')localStorage.setItem('rc_'+CODE,'no');
@@ -123,7 +138,7 @@ document.getElementById('go').onclick=function(){
   fetch(EP+'?action=seatByName&q='+encodeURIComponent(q)).then(r=>r.json()).then(function(j){
     if(!j.ok||!j.hits||!j.hits.length){h.innerHTML='<p class="wait">ไม่พบชื่อนี้ในรายชื่อผู้ตอบรับ<span class="en">Name not found in the guest list</span></p>';return;}
     h.innerHTML=j.hits.map(function(x){
-      return '<div class="hit"><b>'+x.name+'</b><span>'+(x.table?('โต๊ะ '+x.table):'รอจัด · TBA')+'</span></div>';
+      return '<div class="hit"><b>'+esc(x.name)+'</b><span>'+(x.table?('โต๊ะ '+esc(x.table)):'รอจัด · TBA')+'</span></div>';
     }).join('');
   });
 };
