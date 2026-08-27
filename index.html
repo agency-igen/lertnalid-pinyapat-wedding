@@ -449,6 +449,21 @@ section:has(.dec[data-spot="bottom"]){padding-bottom:215px}
 .done-acts .btn{margin-top:0}
 .form-warn{font-size:.55rem;line-height:1.5;color:#8A6A40;margin-top:7px;
      white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seg-cnt.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.seg-cnt.grid button{flex:none;font-size:.82rem;letter-spacing:.04em;padding:11px 2px}
+.party{display:grid;gap:11px;margin-top:2px}
+.party-row{border:1px solid rgba(140,110,70,.32);border-radius:11px;
+     padding:11px 12px 13px;background:rgba(255,255,255,.34)}
+.party-row label{display:block;margin-top:10px}
+.pr-hd{font-family:var(--f-caps);font-size:.56rem;letter-spacing:.2em;color:#8A6A40}
+.pr-hd b{font-weight:600;color:#6B5330}
+.pr-me{font-family:var(--f-th);font-weight:300;font-size:.95rem;color:#2A1E16;
+     background:rgba(255,255,255,.4);border-bottom:1px dashed rgba(140,110,70,.45);
+     border-radius:6px 6px 0 0;padding:9px 8px;margin-top:5px;min-height:38px;
+     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pr-me:empty::before{content:attr(data-ph);color:#9A876B}
+.done-party{margin-top:12px;font-size:.8rem;line-height:1.7;color:#5A4630;
+     white-space:pre-line;text-align:left;display:inline-block}
 /* คลี่เปิดนุ่ม ๆ — ความสูงเพิ่มแบบมีทรานซิชัน พื้นหลังจึงไม่กระโดด */
 #yesExtra{display:grid;grid-template-rows:0fr;opacity:0;
   transition:grid-template-rows .42s cubic-bezier(.3,.7,.3,1),opacity .3s ease,margin .42s ease;
@@ -823,8 +838,8 @@ html.embed .folio{display:none}
         <div id="g2wrap" hidden><label for="gname2">ชื่อ-นามสกุล ผู้ติดตาม · GUEST NAMES</label>
           <input id="gname2" name="gname2" autocomplete="off"
                  placeholder="ระบุชื่อจริงเพื่อจัดโต๊ะที่นั่ง · Full name for seating"></div>
-        
-        <div><label for="gdiet">อาหารที่ไม่ทาน / แพ้อาหาร (ถ้ามี) · DIETARY NOTES</label>
+        <div id="partyWrap" class="party" hidden></div>
+        <div id="dietWrap"><label for="gdiet">อาหารที่ไม่ทาน / แพ้อาหาร (ถ้ามี) · DIETARY NOTES</label>
           <input id="gdiet" name="gdiet" placeholder="เช่น แพ้กุ้ง · Vegetarian · No pork"></div>
         </div></div>
         <div><label for="gmsg">คำอวยพรถึงเรา · A WISH FOR CHAPTER TWO</label>
@@ -1300,7 +1315,22 @@ html.embed .folio{display:none}
   if (c0) cnt = c0.dataset.cnt || '1';
   var fd0 = document.querySelector('.seg-food button[aria-pressed="true"]');
   if (fd0) food = fd0.dataset.food || '';
-  function needG2() { return parseInt(cnt, 10) >= 2; }  /* 2 ที่นั่งขึ้นไป = ขอชื่อผู้ติดตาม */
+  /* ── รายชื่อผู้ร่วมงานรายคน (สูงสุด 10 ท่าน) ────────────────────
+     เพดาน = จำนวนที่นั่งที่เชิญ (PRESEATS จาก ?n= หรือ ginfo) ถ้าไม่มีก็
+     CFG.maxSeats จากหลังบ้าน ถ้าไม่มีอีกก็นับปุ่มที่เรนเดอร์มาให้
+     แขกกดเลข k → ขึ้นช่องชื่อครบ k ท่าน + ช่องแพ้อาหารของแต่ละท่าน
+     ท่านที่ 1 ใช้ชื่อจากช่อง "ชื่อผู้ร่วมงาน" ด้านบน ไม่ต้องพิมพ์ซ้ำ */
+  var PARTY_MAX = 10;
+  var STATIC_CNT = document.querySelectorAll('.seg-cnt button').length || 1;
+  function seatCap() {
+    var n = parseInt(PRESEATS, 10);
+    if (!(n > 0)) n = parseInt(CFG.maxSeats, 10);
+    if (!(n > 0)) n = STATIC_CNT;
+    return Math.max(1, Math.min(n, PARTY_MAX));
+  }
+  function partySize() {
+    return Math.max(1, Math.min(parseInt(cnt, 10) || 1, seatCap()));
+  }
   function segBind(sel, fn) {
     var btns = document.querySelectorAll(sel + ' button');
     btns.forEach(function (b) {
@@ -1317,67 +1347,140 @@ html.embed .folio{display:none}
     att = b.dataset.att;
     var ex = document.getElementById('yesExtra');
     if (ex) ex.classList.toggle('open', att === 'yes');   /* คลี่นุ่ม ๆ ไม่กระตุก */
-    var w2 = document.getElementById('g2wrap');
-    if (w2) w2.hidden = !(att === 'yes' && needG2());
+    renderParty();
   });
   segBind('.seg-food', function (b) { food = b.dataset.food; });
-  /* ── ฟอร์มสองแบบตามที่นั่งที่เชิญของแขกแต่ละคน ─────────────────
-     เชิญ 1 ที่นั่ง → ซ่อนคำถามจำนวนทั้งช่อง (มาคนเดียว ไม่มีตัวเลือก)
-     เชิญ 2 ที่นั่งขึ้นไป → โชว์ตัวเลือก แต่ค่าเริ่มต้นค้างที่ "มา 1 ท่าน" เสมอ
-     (จำนวนที่เชิญคือเพดานสิทธิ์ ไม่ใช่คำตอบล่วงหน้า — แขกกดเลือกเองถ้าพาคู่)
+
+  /* ปุ่มเลือกจำนวน — เชิญ 2 ที่นั่งใช้ปุ่มยาวแบบเดิม, 3 ขึ้นไปเป็นชิปเลข
+     สร้างใหม่เฉพาะตอนเพดานเปลี่ยนจริง (ginfo มาช้า) ไม่งั้นโฟกัสจะหลุด */
+  function buildSeatChips(cap) {
+    var seg = document.querySelector('.seg-cnt');
+    if (!seg || seg.dataset.cap === String(cap)) return;
+    seg.dataset.cap = String(cap);
+    seg.classList.toggle('grid', cap > 2);
+    var cur = Math.max(1, Math.min(parseInt(cnt, 10) || 1, cap));
+    seg.innerHTML = '';
+    for (var i = 1; i <= cap; i++) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.dataset.cnt = String(i);
+      b.setAttribute('aria-pressed', i === cur ? 'true' : 'false');
+      if (cap > 2) { b.textContent = String(i); b.setAttribute('aria-label', i + ' ท่าน'); }
+      else b.innerHTML = 'มา ' + i + ' ท่าน<i class="en-sub">' +
+                         (i === 1 ? 'Just me' : 'With a guest') + '</i>';
+      seg.appendChild(b);
+    }
+    cnt = String(cur);
+    segBind('.seg-cnt', function (x) { cnt = x.dataset.cnt; renderParty(); });
+  }
+
+  /* สร้างการ์ดรายชื่อตามจำนวนที่กด — เก็บของที่พิมพ์ไว้แล้วกลับมาเสมอ
+     (กด 5 → พิมพ์ครบ → เผลอกด 3 แล้วกด 5 ใหม่ ต้องไม่หายไปไหน) */
+  var partyKeep = {};
+  function renderParty() {
+    var wrap = document.getElementById('partyWrap');
+    if (!wrap) return;
+    wrap.querySelectorAll('input').forEach(function (el) { partyKeep[el.id] = el.value; });
+    var on = att === 'yes';
+    wrap.hidden = !on;
+    if (!on) { wrap.innerHTML = ''; return; }
+    var k = partySize(), h = '';
+    for (var i = 1; i <= k; i++) {
+      h += '<div class="party-row"><p class="pr-hd">ท่านที่ ' + i +
+           (i === 1 ? ' <b>· ผู้ตอบรับ</b>' : '') + '</p>';
+      h += (i === 1)
+        ? '<div class="pr-me" id="pn1" data-ph="— กรอกชื่อในช่องด้านบน —"></div>'
+        : '<label for="pn' + i + '">ชื่อ-นามสกุล · FULL NAME</label>' +
+          '<input id="pn' + i + '" class="pr-name" autocomplete="off" ' +
+          'placeholder="ระบุชื่อจริงเพื่อจัดโต๊ะที่นั่ง">';
+      h += '<label for="pd' + i + '">อาหารที่ไม่ทาน / แพ้อาหาร · DIETARY</label>' +
+           '<input id="pd' + i + '" class="pr-diet" autocomplete="off" ' +
+           'placeholder="ไม่มีเว้นว่างได้ · เช่น แพ้กุ้ง">' +
+           '</div>';
+    }
+    wrap.innerHTML = h;
+    wrap.querySelectorAll('input').forEach(function (el) {
+      if (partyKeep[el.id]) el.value = partyKeep[el.id];
+    });
+    mirrorHost();
+  }
+  function mirrorHost() {                      /* ท่านที่ 1 = ชื่อจากช่องบนสุด */
+    var me = document.getElementById('pn1');
+    if (me) me.textContent = val('gname');
+  }
+  var hostField = document.getElementById('gname');
+  if (hostField) hostField.addEventListener('input', mirrorHost);
+
+  /* ── ฟอร์มปรับตามที่นั่งที่เชิญของแขกแต่ละคน ────────────────────
+     เชิญ 1 ที่นั่ง → ซ่อนคำถามจำนวน (มาคนเดียว ไม่มีตัวเลือก)
+     เชิญ 2 ที่นั่งขึ้นไป → โชว์ตัวเลือกถึงเพดาน แต่ค่าเริ่มต้นค้างที่ 1 เสมอ
+     (จำนวนที่เชิญคือเพดานสิทธิ์ ไม่ใช่คำตอบล่วงหน้า)
      เรียกซ้ำได้ทุกจังหวะ: ตอนเปิดหน้า (n= ในลิงก์) และตอน ginfo ตอบกลับ */
   function applySeatsForm() {
     var sb = document.getElementById('seatsBlock');
     var w2 = document.getElementById('g2wrap');
-    if (PRESEATS === '1') {
+    var dw = document.getElementById('dietWrap');
+    if (w2) w2.hidden = true;          /* ช่องผู้ติดตามเดี่ยว → แทนด้วยรายชื่อรายคน */
+    if (dw) dw.hidden = true;          /* ช่องแพ้อาหารรวม → แทนด้วยของแต่ละท่าน */
+    var cap = seatCap();
+    if (cap <= 1) {
       cnt = '1';
       if (sb) sb.hidden = true;
-      if (w2) w2.hidden = true;
-      return;
+    } else {
+      if (sb) sb.hidden = false;
+      buildSeatChips(cap);
+      var warn = sb && sb.querySelector('.form-warn');
+      if (warn) warn.innerHTML = 'เชิญไว้ ' + cap + ' ท่าน (รวมตัวคุณ) · กรอกชื่อให้ครบทุกท่าน<br>' +
+        '<i class="en-line">' + cap + ' seats reserved · unlisted guests won\'t be seated</i>';
     }
-    if (sb) sb.hidden = false;
-    if (w2) w2.hidden = !(att === 'yes' && needG2());
+    renderParty();
   }
   SEATSFORM = applySeatsForm;
   applySeatsForm();
-  segBind('.seg-cnt', function (b) {
-    cnt = b.dataset.cnt;
-    var w = document.getElementById('g2wrap');
-    if (w) {
-      w.hidden = !needG2();                   /* เลือก 2 ที่นั่งขึ้นไป → ช่องชื่อผู้ติดตามโผล่ */
-      if (needG2()) {
-        var f2 = document.getElementById('gname2');
-        if (f2) setTimeout(function () { f2.focus(); }, 60);
-      }
-    }
-  });
-
   function val(id) {
     var el = document.getElementById(id);
     return el && el.value ? el.value.trim() : '';
   }
+  /* รายชื่อผู้ร่วมงานทั้งคณะ — ท่านที่ 1 คือผู้ตอบรับ (ช่องชื่อด้านบน) */
+  function party() {
+    var k = partySize(), out = [];
+    for (var i = 1; i <= k; i++) {
+      out.push({ n: (i === 1 ? val('gname') : val('pn' + i)), d: val('pd' + i) });
+    }
+    return out;
+  }
   function data() {
-    var name = val('gname');
-    var name2 = needG2() ? val('gname2') : '';
-    if (name2) name += ' และ ' + name2;       /* ชื่อผู้ติดตามลงช่องเดียว — จัดโต๊ะเห็นครบ */
-    var diet = att === 'yes' ? val('gdiet') : '';
+    var yes = att === 'yes';
+    var ppl = yes ? party() : [{ n: val('gname'), d: '' }];
+    /* ชื่อรวมช่องเดียว — ชีต/หน้าเช็คอิน/หน้าที่นั่งตัวเดิมอ่านฟิลด์นี้ */
+    var name = ppl.map(function (p) { return p.n; })
+                  .filter(Boolean).join(' และ ');
+    /* งด/แพ้ ผูกชื่อไว้ด้วย ไม่งั้นหน้างานไม่รู้ว่าจานไหนของใคร */
+    var diet = yes ? ppl.filter(function (p) { return p.d; })
+                        .map(function (p, k) { return (p.n || ('ท่านที่ ' + (k + 1))) + ': ' + p.d; })
+                        .join(' · ') : '';
     var msg = val('gmsg');
     /* note รวมไว้เผื่อ Apps Script ตัวเก่า — ตัวใหม่ใช้ฟิลด์แยก */
     var parts = [];
-    if (att === 'yes') { if (food) parts.push('อาหาร: ' + food); if (diet) parts.push('งด/แพ้: ' + diet); }
+    if (yes) { if (food) parts.push('อาหาร: ' + food); if (diet) parts.push('งด/แพ้: ' + diet); }
     if (msg) parts.push(msg);
     if (!myCode) myCode = makeCode();
     return {
       cardId: CFG.cardId || '',
       name: name,
       going: att,
-      seats: att === 'yes' ? cnt : '0',
-      food: att === 'yes' ? food : '',
+      seats: yes ? String(ppl.length) : '0',
+      food: yes ? food : '',
       diet: diet,
       msg: msg,
       note: parts.join(' · '),
       code: CODE || myCode,
-      at: new Date().toISOString()
+      at: new Date().toISOString(),
+      /* ฟิลด์ใหม่ — Apps Script ตัวเก่ามองข้ามได้ไม่พัง ตัวใหม่เก็บรายคน */
+      guests: yes ? ppl : [],
+      guestsText: yes ? ppl.map(function (p, k) {
+        return (k + 1) + '. ' + (p.n || '-') + (p.d ? ' (' + p.d + ')' : '');
+      }).join('\n') : ''
     };
   }
   /* รหัสแขกสำหรับเช็คอินหน้างาน — สั้น อ่านง่าย ไม่ซ้ำกันจริงในสเกลงานแต่ง */
@@ -1446,10 +1549,15 @@ html.embed .folio{display:none}
     var d = data();
     if (!d.name) { note('กรุณากรอกชื่อ · Please enter your name', 'err'); return; }
     if (!att) { note('กรุณาเลือกว่าจะไปร่วมงานไหม · Please choose attend or decline', 'err'); return; }
-    if (att === 'yes' && needG2() && !val('gname2')) {
-      note('กรุณากรอกชื่อผู้ติดตามด้วย (แขกที่ไม่มีรายชื่อจะไม่มีโต๊ะที่นั่ง) · Please add your guest\'s name', 'err');
-      var f2 = document.getElementById('gname2'); if (f2) f2.focus();
-      return;
+    if (att === 'yes') {                     /* ทุกท่านต้องมีชื่อ ไม่งั้นจัดโต๊ะไม่ได้ */
+      var ppl = party();
+      for (var pi = 1; pi < ppl.length; pi++) {
+        if (ppl[pi].n) continue;
+        note('กรุณากรอกชื่อผู้ร่วมงานให้ครบทุกท่าน (แขกที่ไม่มีรายชื่อจะไม่มีโต๊ะที่นั่ง) · Please name every guest', 'err');
+        var fp = document.getElementById('pn' + (pi + 1));
+        if (fp) { fp.focus(); fp.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+        return;
+      }
     }
     var btn = document.getElementById('sendBtn');
     btn.disabled = true; note('กำลังส่ง…');
@@ -1487,6 +1595,8 @@ html.embed .folio{display:none}
         '<img class="done-qr" crossorigin="anonymous" alt="QR เช็คอิน" src="https://api.qrserver.com/v1/create-qr-code/?size=440x440&color=6B5637&bgcolor=FBF7EF&data=' + qrData + '">' +
         '<p class="done-hint">กดบันทึกรูปเก็บไว้ — QR นี้ใช้เช็คอินหน้างาน และสแกนดู\u200bโต๊ะที่นั่งของคุณได้เมื่อใกล้วันงาน' +
         '<i class="en-line">Save the QR — it checks you in and shows your table near the day</i></p>';
+      if (d.guests && d.guests.length > 1)      /* มากันหลายท่าน — โชว์รายชื่อให้ทวนก่อนปิดหน้า */
+        inner += '<p class="done-party" id="donePartyList"></p>';
       inner += '<div class="done-acts">' +
         '<button type="button" class="btn sm" id="doneSave">บันทึกรูป QR · SAVE</button>' +
         (CFG.startISO ? '<button type="button" class="btn sm" id="doneCal">เพิ่มลงปฏิทิน · CALENDAR</button>' : '') +
@@ -1495,6 +1605,8 @@ html.embed .folio{display:none}
     box.innerHTML = inner;
     var wt = box.querySelector('.done-wtitle');
     if (wt) wt.textContent = CFG.qrTitle;
+    var dp = box.querySelector('#donePartyList');   /* ชื่อแขกมาจากช่องกรอก — ใส่เป็นข้อความล้วน */
+    if (dp) dp.textContent = d.guestsText;
     var n = document.getElementById('rsvpNote');
     n.parentNode.insertBefore(box, n);
     var dc = document.getElementById('doneCal');

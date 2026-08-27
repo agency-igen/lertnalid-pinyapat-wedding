@@ -40,6 +40,7 @@ input{flex:1;font:inherit;font-size:.95rem;padding:12px 13px;border:1px solid #D
 .g-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
 .g-cell{background:#F6F1E7;border-radius:11px;padding:10px 12px}
 .g-cell.wide{grid-column:1/-1}
+.g-cell.roster b{white-space:pre-line;line-height:1.65;font-size:.88rem}
 .g-cell span{display:block;font-size:.58rem;letter-spacing:.14em;color:#9A876B;text-transform:uppercase}
 .g-cell b{font-weight:400;font-size:.95rem;color:#4A3826}
 .g-cell.tb b{font-family:Georgia,serif;font-size:1.5rem;color:#7A5C33}
@@ -91,11 +92,22 @@ function draw(){
       String(r.code).toLowerCase().includes(q);})
     .forEach(function(r){
       var d=document.createElement('div');d.className='row';
-      d.innerHTML='<div class="nm"><b>'+r.name+'</b><span>'+(r.seats||1)+' ท่าน'+
-        (r.table?' · โต๊ะ '+r.table:'')+' · '+(r.code||'-')+'</span></div>'+
-        (r.checkin?'<span class="tag ok">✓ '+r.checkin+'</span>':'<span class="tag no">ยังไม่มา</span>');
+      d.innerHTML='<div class="nm"><b>'+esc(r.name)+'</b><span>'+esc(r.seats||1)+' ท่าน'+
+        (r.table?' · โต๊ะ '+esc(r.table):'')+' · '+esc(r.code||'-')+'</span></div>'+
+        (r.checkin?'<span class="tag ok">✓ '+esc(r.checkin)+'</span>':'<span class="tag no">ยังไม่มา</span>');
       d.onclick=function(){openGuest(r);};
       el.appendChild(d);});}
+/* รายชื่อรายคน — ชีตเก็บได้ทั้งข้อความหลายบรรทัด หรือ JSON array
+   ถ้าชีตยังไม่มีคอลัมน์นี้ ก็คืนค่าว่าง การ์ดแขกหน้าตาเหมือนเดิมทุกอย่าง */
+function roster(r){
+  if(r.guestsText) return String(r.guestsText);
+  var g=r.guests;
+  if(typeof g==='string'){ try{g=JSON.parse(g);}catch(e){return g;} }
+  if(!Array.isArray(g)||!g.length) return '';
+  return g.map(function(p,i){
+    return (i+1)+'. '+(p.n||p.name||'-')+((p.d||p.diet)?' ('+(p.d||p.diet)+')':'');
+  }).join('\n');
+}
 function esc(x){return String(x==null?'':x).replace(/[<>&"]/g,function(c){
   return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];});}
 function openGuest(r){
@@ -107,6 +119,7 @@ function openGuest(r){
     '<div class="g-cell"><span>จำนวน</span><b>'+esc(r.seats||1)+' ท่าน</b></div>'+
     '<div class="g-cell"><span>อาหาร</span><b>'+(esc(r.food)||'—')+'</b></div>'+
     '<div class="g-cell'+(r.diet?' warn':'')+'"><span>งด/แพ้</span><b>'+(esc(r.diet)||'—')+'</b></div>'+
+    (roster(r)?'<div class="g-cell wide roster"><span>รายชื่อผู้ร่วมงาน</span><b>'+esc(roster(r))+'</b></div>':'')+
     (r.note?'<div class="g-cell wide"><span>คำอวยพร</span><b>'+esc(r.note)+'</b></div>':'')+
     '</div>'+
     '<div class="g-act">'+
