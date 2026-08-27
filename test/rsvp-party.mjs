@@ -117,13 +117,15 @@ ok(await p2.locator('#partyWrap .party-row').count() === 1, 'มีการ์�
 ok(await p2.locator('#pd1').count() === 1, 'ยังมีช่องแพ้อาหารของตัวเอง');
 
 // ── ลิงก์ทั่วไป ไม่มี n= → คงพฤติกรรมเดิม 2 ปุ่ม ───────────────────
-console.log('\nลิงก์ทั่วไป (ไม่มี ?n=)');
+console.log('\nลิงก์ทั่วไป (ไม่มี ?n= → ใช้ CFG.maxSeats)');
 const p3 = await ctx.newPage();
 await p3.route('**script.google.com**', r => r.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' }));
 await p3.goto(CARD, { waitUntil: 'domcontentloaded' });
 await p3.waitForSelector('#rsvpForm', { timeout: 20000 });
 await p3.waitForTimeout(300);
-ok(await p3.locator('.seg-cnt button').count() === 2, 'คงเดิม 2 ปุ่ม (ไม่เปิด 10 ให้คนทั่วไป)');
+const cap = await p3.evaluate(() => Number(window.CFG && window.CFG.maxSeats) || 0);
+ok(await p3.locator('.seg-cnt button').count() === Math.min(cap || 2, 10),
+   'จำนวนชิปตรงกับ CFG.maxSeats ของการ์ด (= ' + cap + ')');
 
 await b.close();
 console.log('\n' + (fails ? '✗ ' + fails + ' ข้อไม่ผ่าน' : '✓ ผ่านทั้งหมด'));
