@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="bv" content="81af861133">
+<meta name="bv" content="668e621f32">
 <title>Memory: Chapter Two — Lertnalid &amp; Pinyapat</title>
 <meta name="description" content="ขอเรียนเชิญร่วมเป็นเกียรติในพิธีมงคลสมรส Lertnalid &amp; Pinyapat · วันเสาร์ที่ 12 กันยายน 2569 เวลา 17.00 น. · Grand Ballroom, Millennium Hilton Bangkok">
 <meta property="og:type" content="website">
@@ -865,7 +865,7 @@ html.embed .folio{display:none}
         Song &amp; Lingling · 12 · 09 · 2026</p></section>
   </div>
 </div>
-<script>var CFG = {"bv": "81af861133", "rsvpMode": "sheet", "rsvpEndpoint": "https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec", "lineUrl": "", "email": "hello@example.com", "musicUrl": "assets/music.mp3?v=1785579325", "cardId": "lertnalid-pinyapat", "parallax": 0.045, "dust": false, "touchFx": true, "gateStyle": "film", "title": "Memory: Chapter Two — Lertnalid & Pinyapat", "venue": "Millennium Hilton Bangkok", "startISO": "2026-09-12T17:00:00+07:00", "qrTitle": "Song & Lingling Wedding", "ginfo": "https://admin-production-ce9d.up.railway.app"};</script>
+<script>var CFG = {"bv": "668e621f32", "rsvpMode": "sheet", "rsvpEndpoint": "https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec", "lineUrl": "", "email": "hello@example.com", "musicUrl": "assets/music.mp3?v=1785579325", "cardId": "lertnalid-pinyapat", "parallax": 0.045, "dust": false, "touchFx": true, "gateStyle": "film", "title": "Memory: Chapter Two — Lertnalid & Pinyapat", "venue": "Millennium Hilton Bangkok", "startISO": "2026-09-12T17:00:00+07:00", "qrTitle": "Song & Lingling Wedding", "ginfo": "https://admin-production-ce9d.up.railway.app"};</script>
 <script>/* ─────────────────────────────────────────────────────────────────────
    Runtime ของการ์ด — ไฟล์เดียวใช้กับทุกการ์ด ไม่มีข้อมูลลูกค้าอยู่ในนี้
    ค่าเฉพาะการ์ดมาจาก window.CFG ที่ตัวเรนเดอร์ฉีดเข้ามา
@@ -1693,6 +1693,25 @@ html.embed .folio{display:none}
     });
     /* สำเนาสลิปเข้าเซิร์ฟเวอร์หลังบ้าน — เส้นทางที่สองที่ไม่พึ่ง Drive ของชีต
        ยิงคู่ขนาน ล้มก็ไม่กระทบการส่งหลัก (ลองซ้ำเองอีก 2 ครั้ง) */
+    /* เส้นทางหลัก: เซิร์ฟเวอร์หลังบ้าน (เก็บไฟล์ + ส่งต่อเข้าชีตและ LINE)
+       ล้มเมื่อไร ถอยไปยิงชีตตรงแบบเดิมทันที — ไม่มีทางที่สลิปหาย */
+    function slipFirst(payload) {
+      if (!CFG.ginfo) return sheetPost({ kind: 'gift', name: payload.name,
+        msg: payload.msg, amount: payload.amount, photo: payload.photo },
+        { heavy: !!payload.photo });
+      return fetch(CFG.ginfo + '/api/slip', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(function (x) {
+        if (!x.ok) throw 0;
+        return x.json();
+      }).catch(function () {
+        return sheetPost({ kind: 'gift', name: payload.name, msg: payload.msg,
+                           amount: payload.amount, photo: payload.photo },
+                         { heavy: !!payload.photo });
+      });
+    }
+
     function slipBackup(payload, tries) {
       if (!CFG.ginfo) return;
       fetch(CFG.ginfo + '/api/slip', {
@@ -1719,10 +1738,9 @@ html.embed .folio{display:none}
       btn.disabled = true; btn.textContent = 'กำลังส่ง… · Sending…';
       var gaAmtEl = document.getElementById('gaAmt');
       var gaAmt = gaAmtEl ? gaAmtEl.value.replace(/[^0-9.]/g, '') : '';
-      slipBackup({ cardId: CFG.cardId || '', name: name, msg: msg,
-                   amount: gaAmt, photo: gaPhoto });
-      sheetPost({ kind: 'gift', name: name, msg: msg, amount: gaAmt, photo: gaPhoto },
-                { heavy: !!gaPhoto })
+      var slipPayload = { cardId: CFG.cardId || '', name: name, msg: msg,
+                          amount: gaAmt, photo: gaPhoto };
+      slipFirst(slipPayload)
         .then(function () {
           document.getElementById('gaPanel').classList.remove('open');
           gaOpen.style.display = 'none';
