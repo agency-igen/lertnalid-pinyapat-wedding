@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="bv" content="0b20892814">
+<meta name="bv" content="1abb21a74d">
 <title>Memory: Chapter Two — Lertnalid &amp; Pinyapat</title>
 <meta name="description" content="ขอเรียนเชิญร่วมเป็นเกียรติในพิธีมงคลสมรส Lertnalid &amp; Pinyapat · วันเสาร์ที่ 12 กันยายน 2569 เวลา 17.00 น. · Grand Ballroom, Millennium Hilton Bangkok">
 <meta property="og:type" content="website">
@@ -1211,7 +1211,7 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
         Song &amp; Lingling · 12 · 09 · 2026</p></section>
   </div>
 </div>
-<script>var CFG = {"bv": "0b20892814", "rsvpMode": "sheet", "rsvpEndpoint": "https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec", "lineUrl": "", "email": "hello@example.com", "musicUrl": "assets/music.mp3?v=1785579325", "cardId": "lertnalid-pinyapat", "parallax": 0.045, "dust": false, "touchFx": true, "gateStyle": "film", "title": "Memory: Chapter Two — Lertnalid & Pinyapat", "venue": "Millennium Hilton Bangkok", "startISO": "2026-09-12T17:00:00+07:00", "qrTitle": "Song & Lingling Wedding", "ginfo": "https://admin-production-ce9d.up.railway.app"};</script>
+<script>var CFG = {"bv": "1abb21a74d", "rsvpMode": "sheet", "rsvpEndpoint": "https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec", "lineUrl": "", "email": "hello@example.com", "musicUrl": "assets/music.mp3?v=1785579325", "cardId": "lertnalid-pinyapat", "parallax": 0.045, "dust": false, "touchFx": true, "gateStyle": "film", "title": "Memory: Chapter Two — Lertnalid & Pinyapat", "venue": "Millennium Hilton Bangkok", "startISO": "2026-09-12T17:00:00+07:00", "qrTitle": "Song & Lingling Wedding", "ginfo": "https://admin-production-ce9d.up.railway.app"};</script>
 <script>/* ─────────────────────────────────────────────────────────────────────
    Runtime ของการ์ด — ไฟล์เดียวใช้กับทุกการ์ด ไม่มีข้อมูลลูกค้าอยู่ในนี้
    ค่าเฉพาะการ์ดมาจาก window.CFG ที่ตัวเรนเดอร์ฉีดเข้ามา
@@ -2675,7 +2675,14 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
     }
 
     /* ── แผ่นอัปโหลด + ปุ่มลอยล่างจอ ── */
+    function resetVis() {
+      VIS = 'pub';
+      if (visBox) [].forEach.call(visBox.querySelectorAll('.mo-vis-b'), function (x) {
+        x.classList.toggle('on', x.dataset.vis !== 'priv');
+      });
+    }
     function openSheet() {
+      resetVis();
       if (!panel) return;
       panel.hidden = false;
       document.documentElement.classList.add('mo-open');
@@ -3081,26 +3088,74 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
       };
       return attempt(2);
     }
-    function postVideo(q, name, cap, onProg) {
+    /* ส่งคลิปเป็นท่อนละ 6MB — เน็ตงานแต่งสะดุดบ่อย ท่อนไหนหลุดส่งซ้ำเฉพาะท่อนนั้น ไม่เริ่มใหม่ทั้งไฟล์ */
+    var VPART = 6 * 1024 * 1024;
+    function postPart(url, blob, ctype, onProg) {
       return new Promise(function (res, rej) {
-        var f = q.video;
-        var url = API + '/api/momentvid?cardId=' + encodeURIComponent(CID) + '&name=' + encodeURIComponent(name) +
-                  '&cap=' + encodeURIComponent(cap) + '&type=' + encodeURIComponent(f.type || 'video/mp4') +
-                  '&dur=' + encodeURIComponent(q.dur || 0) + '&code=' + encodeURIComponent(CODE || '') +
-                  '&vis=' + encodeURIComponent(VIS);
         var x = new XMLHttpRequest();
         x.open('POST', url, true);
-        x.timeout = 10 * 60 * 1000;
-        x.setRequestHeader('Content-Type', f.type || 'video/mp4');
+        x.timeout = 5 * 60 * 1000;
+        x.setRequestHeader('Content-Type', ctype);
         if (x.upload && onProg) x.upload.onprogress = function (e) { if (e.lengthComputable) onProg(e.loaded / e.total); };
         x.onload = function () {
           var j = null; try { j = JSON.parse(x.responseText); } catch (e0) {}
-          if (x.status === 200 && j && j.ok) res(j); else rej(new Error((j && j.error) || ('http ' + x.status)));
+          if (x.status === 200 && j && j.ok) { res(j); return; }
+          var er = new Error((j && j.error) || ('http ' + x.status));
+          if (j && typeof j.have === 'number') er.have = j.have;     /* เซิร์ฟเวอร์บอกว่ารับถึงไบต์ไหนแล้ว */
+          er.fatal = x.status === 413 || x.status === 403 || x.status === 507;
+          rej(er);
         };
         x.onerror = function () { rej(new Error('network')); };
         x.ontimeout = function () { rej(new Error('timeout')); };
-        x.send(f);
+        x.send(blob);
       });
+    }
+    function postVideo(q, name, cap, onProg) {
+      var f = q.video, ctype = f.type || 'video/mp4';
+      var uid = 'g' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      var base = API + '/api/momentvid?cardId=' + encodeURIComponent(CID) + '&name=' + encodeURIComponent(name) +
+                 '&cap=' + encodeURIComponent(cap) + '&type=' + encodeURIComponent(ctype) +
+                 '&dur=' + encodeURIComponent(q.dur || 0) + '&code=' + encodeURIComponent(CODE || '') +
+                 '&vis=' + encodeURIComponent(VIS) + '&uid=' + uid + '&total=' + f.size;
+      return new Promise(function (resolve, reject) {
+        var off = 0, fails = 0;
+        function step() {
+          var end = Math.min(f.size, off + VPART);
+          var blob = f.slice(off, end), sent = off;
+          postPart(base + '&off=' + off, blob, ctype, function (pct) {
+            if (onProg) onProg(Math.min(1, (sent + pct * blob.size) / f.size));
+          }).then(function (j) {
+            fails = 0;
+            off = (typeof j.have === 'number') ? j.have : end;
+            if (onProg) onProg(Math.min(1, off / f.size));
+            if (j.pending) { step(); return; }
+            resolve(j);                       /* ท่อนสุดท้ายผ่าน = เซิร์ฟเวอร์รับไฟล์ครบแล้ว */
+          }).catch(function (e) {
+            if (typeof e.have === 'number') off = e.have;
+            if (!e.fatal && ++fails <= 4) { setTimeout(step, 2000 * fails); return; }
+            reject(e);
+          });
+        }
+        step();
+      });
+    }
+    /* คลิปส่วนตัว: ไม่ขึ้นกริด แต่ยังต้องรู้ว่าแปลงผ่านไหม — ล้มแล้วต้องบอกผู้ส่งให้ลองใหม่ */
+    function privWatch(j) {
+      var tries = 0;
+      var tick = function () {
+        fetch(API + '/api/momentstatus?id=' + encodeURIComponent(CID) + '&mid=' + encodeURIComponent(j.id) + '&t=' + Date.now(), { cache: 'no-store' })
+          .then(function (r) { return r.json(); })
+          .then(function (st) {
+            if (st && st.ok && !st.ready && st.error) {
+              err('คลิปส่วนตัว 1 คลิปแปลงไม่สำเร็จ — ลองส่งไฟล์อื่น · One private clip could not be processed');
+              return;
+            }
+            if (st && st.ok && st.ready) return;
+            if (++tries < 240) setTimeout(tick, 5000);
+          })
+          .catch(function () { if (++tries < 240) setTimeout(tick, 5000); });
+      };
+      setTimeout(tick, 6000);
     }
     /* วิดีโอแปลงเบื้องหลัง — ถามสถานะทุก 5 วิ พอเสร็จค่อยโผล่ในกริด */
     var pendingVids = 0;
@@ -3124,9 +3179,9 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
               setCount(); vidNote();
               return;
             }
-            if (++tries < 72) setTimeout(tick, 5000); else { pendingVids--; vidNote(); }
+            if (++tries < 240) setTimeout(tick, 5000); else { pendingVids--; vidNote(); }
           })
-          .catch(function () { if (++tries < 72) setTimeout(tick, 5000); else { pendingVids--; vidNote(); } });
+          .catch(function () { if (++tries < 240) setTimeout(tick, 5000); else { pendingVids--; vidNote(); } });
       };
       setTimeout(tick, 6000);
       vidNote();
@@ -3157,8 +3212,8 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
             return postVideo(q, name, cap, function (pct) {
               sendBtn.textContent = 'กำลังส่งวิดีโอ ' + (i + 1) + '/' + n + ' · ' + Math.round(pct * 100) + '%';
             }).then(function (j) {
-              ok++; remember(j.id);
-              if (!priv) watchVideo(j, name, cap, q);
+              ok++;
+              if (priv) { privWatch(j); } else { remember(j.id); watchVideo(j, name, cap, q); }
             }).catch(function (e) {
               fail++; failed.push(q);
               if (e && e.message && !/^(network|timeout|http \d+)$/.test(e.message)) err(e.message);
@@ -3168,7 +3223,7 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
             .then(function (j) {
               ok++;
               var it = { id: j.id, name: name, cap: cap, url: j.url, thumb: j.thumb, w: q.w, h: q.h };
-              remember(j.id);
+              if (!priv) remember(j.id);
               /* ส่วนตัว = ไม่ขึ้นการ์ด (บ่าวสาวดูในระบบหลังบ้าน) · กำลังกรองอยู่ก็ไม่ยัดลงกริดที่ไม่ตรงเงื่อนไข */
               if (priv || KIND === 'video' || (QSTR && (name || '').toLowerCase().indexOf(QSTR.toLowerCase()) < 0)) { setCount(); return; }
               if (!have[it.id]) { have[it.id] = 1; items.unshift(it); total++; offset++; tile(it, true); }
