@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="bv" content="c7c21c9f4f">
+<meta name="bv" content="b3d16eb6f7">
 <title>Memory: Chapter Two — Lertnalid &amp; Pinyapat</title>
 <meta name="description" content="ขอเรียนเชิญร่วมเป็นเกียรติในพิธีมงคลสมรส Lertnalid &amp; Pinyapat · วันเสาร์ที่ 12 กันยายน 2569 เวลา 17.00 น. · Grand Ballroom, Millennium Hilton Bangkok">
 <meta property="og:type" content="website">
@@ -576,16 +576,18 @@ section:has(.dec[data-spot="bottom"]){padding-bottom:215px}
   text-transform:uppercase;margin-top:12px;min-height:1em}
 section:has(.mo-bar),section.sec-album{overflow:visible}   /* sticky ต้องไม่ถูก section ที่ overflow:hidden ครอบ (คลาสสำรองสำหรับเบราว์เซอร์ที่ไม่รู้จัก :has) */
 section.sec-album{padding-bottom:104px}                    /* เว้นที่ให้ปุ่มลอยไม่ทับภาพสุดท้าย */
-.mo{width:100%;max-width:440px;margin-top:16px;position:relative}
+.mo{width:100%;max-width:440px;margin-top:16px;position:relative;padding-bottom:12px}
+.mo.fab-on{padding-bottom:84px}
 .mo::before{content:"";position:absolute;inset:-10px 0;z-index:-1;pointer-events:none;opacity:.5;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.055'/%3E%3C/svg%3E");
   background-size:120px 120px;mix-blend-mode:multiply}
 /* แถบกรอง — ติดขอบบนขณะเลื่อนดูอัลบั้ม */
-.mo-bar{position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:6px;padding:10px 46px 9px 2px;
-  background:var(--paper);border-bottom:1px solid rgba(169,133,79,.28);flex-wrap:wrap;row-gap:0}
+.mo-bar{position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:5px;padding:10px 2px 9px;
+  background:var(--paper);border-bottom:1px solid rgba(169,133,79,.28)}
 .mo-bar::after{content:"";position:absolute;left:0;right:0;top:100%;height:12px;pointer-events:none;
   background:linear-gradient(180deg,var(--paper),rgba(246,242,234,0))}
-.mo-tabs{display:flex;gap:5px;flex:1 1 auto;min-width:0;overflow-x:auto;scrollbar-width:none}
+.mo-tabs{display:flex;gap:5px;flex:1 1 auto;min-width:0;overflow-x:auto;scrollbar-width:none;
+  -webkit-mask-image:linear-gradient(90deg,#000 92%,transparent);mask-image:linear-gradient(90deg,#000 92%,transparent)}
 .mo-tabs::-webkit-scrollbar{display:none}
 .mo-tab{flex:0 0 auto;font-family:var(--f-th);font-weight:300;font-size:.7rem;line-height:1;color:var(--ink-soft);
   padding:13px 14px;min-height:44px;border:1px solid rgba(178,141,87,.35);border-radius:999px;background:none;cursor:pointer;
@@ -596,17 +598,24 @@ section.sec-album{padding-bottom:104px}                    /* เว้นที
   padding:13px 13px;min-height:44px;min-width:44px;border:1px solid rgba(178,141,87,.3);border-radius:999px;
   background:none;cursor:pointer;line-height:1}
 .mo-ico.find{font-family:var(--f-th);font-size:.7rem;letter-spacing:0}
+.mo-ico.sort{display:inline-flex;gap:0;padding:0;overflow:hidden;font-family:var(--f-th);letter-spacing:0}
+.mo-ico.sort b,.mo-ico.sort span{font-weight:300;font-size:.66rem;padding:13px 9px;line-height:1;color:var(--ink-soft)}
+.mo-ico.sort b{background:rgba(191,148,84,.16);color:#5C4327}
+.mo-ico.sort.newest b{background:none;color:var(--ink-soft)}
+.mo-ico.sort.newest span{background:rgba(191,148,84,.16);color:#5C4327}
 .mo-ico:active{background:rgba(191,148,84,.14)}
 .mo-search{display:flex;gap:6px;margin:0 2px 8px}
 .mo-search input{flex:1 1 auto;min-width:0;font-family:var(--f-th);font-weight:300;font-size:.8rem;padding:8px 12px;
   border:1px solid rgba(178,141,87,.4);border-radius:999px;background:#FDFBF6;color:var(--ink);outline:none}
 .mo-search input:focus{border-color:var(--gold)}
 /* กริดแบบวารสาร: สองคอลัมน์ รักษาสัดส่วนภาพเดิม ภาพเด่นกินเต็มความกว้าง */
-.mo-grid{columns:2;column-gap:9px;margin-top:6px;width:100%}
-.mo-it{position:relative;display:block;width:100%;break-inside:avoid;margin:0 0 9px;cursor:zoom-in;
+/* กริดแถวต่อแถว — ลำดับอ่านซ้ายไปขวาตรงกับลำดับที่คัดไว้ (คอลัมน์แบบ CSS columns จะสลับลำดับ) */
+.mo-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 9px;grid-auto-rows:4px;margin-top:6px;width:100%;
+  align-items:start}
+.mo-it{position:relative;display:block;width:100%;cursor:zoom-in;margin:0;
   opacity:0;transform:translateY(12px);transition:opacity .8s ease,transform .8s ease}
 .mo-it.in{opacity:1;transform:none}
-.mo-it.wide{column-span:all;margin-bottom:12px}
+.mo-it.wide{grid-column:1 / -1}
 .mo-ph{position:relative;width:100%;overflow:hidden;border-radius:10px;background:#EFE8DC;
   border:1px solid rgba(178,141,87,.28)}
 .mo-ph img{width:100%;height:auto;display:block;filter:saturate(.97) contrast(1.01)}
@@ -624,7 +633,7 @@ section.sec-album{padding-bottom:104px}                    /* เว้นที
 .mo-it.wide figcaption{justify-content:center;padding-top:9px}
 .mo-it.wide figcaption span{font-family:var(--f-display);font-style:italic;font-size:.9rem;letter-spacing:0;
   text-transform:none;color:var(--ink)}
-.mo-leaf{display:flex;align-items:center;gap:12px;margin:26px 2px 22px;break-inside:avoid;column-span:all}
+.mo-leaf{display:flex;align-items:center;gap:12px;margin:26px 2px 22px;grid-column:1 / -1}
 .mo-leaf i{flex:1;height:1px;background:rgba(169,133,79,.28)}
 .mo-leaf b{font-family:var(--f-caps);font-weight:400;font-size:.46rem;letter-spacing:.24em;color:#6B5A4A;
   white-space:nowrap}
@@ -655,7 +664,7 @@ section.sec-album{padding-bottom:104px}                    /* เว้นที
 .mo-note{margin-top:10px;text-align:center}
 .mo-empty{font-family:var(--f-th);font-weight:300;font-size:.78rem;color:var(--ink-soft);line-height:1.9;
   padding:26px 10px;border:1px dashed rgba(178,141,87,.4);border-radius:14px;margin-top:12px;text-align:center;
-  column-span:all;break-inside:avoid}
+  grid-column:1 / -1}
 .mo-info{font-family:var(--f-th);font-weight:300;font-size:.72rem;color:#7A5C33;text-align:center;line-height:1.7}
 /* ปุ่มลอยล่างจอ ขณะเลื่อนดูอัลบั้ม */
 .mo-fab{position:fixed;left:50%;transform:translateX(-50%) translateY(120%);
@@ -1110,7 +1119,7 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
       <p class="th reveal d2" style="font-size:var(--s2);margin-top:10px;max-width:330px">ภาพและคลิปก่อนวันที่เราจะเริ่มบทที่สองด้วยกัน<br><i class="en-line">A few frames from before our second chapter began</i></p>
       <div class="mo pw reveal d3" id="pw" data-max="0" data-video="0" data-vsec="60">
         <p class="note mo-note">แตะรูปหรือคลิปเพื่อดูเต็มจอและบันทึก · Tap to view and save</p>
-        <p class="mo-count" id="pwCount"></p>
+        <p class="mo-empty-wrap" id="pwCount"></p>
         <div class="mo-grid" id="pwGrid"></div>
         <button type="button" class="btn sm mo-more" id="pwMore" hidden>ดูเพิ่ม · MORE</button>
       </div>
@@ -1156,9 +1165,9 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
           <div class="mo-tabs" id="moTabs">
             <button type="button" class="mo-tab on" data-kind="">ทั้งหมด <i id="moNall"></i></button>
             <button type="button" class="mo-tab" data-kind="photo">ภาพ <i id="moNph"></i></button>
-            <button type="button" class="mo-tab" data-kind="video">วิดีโอ <i id="moNvd"></i></button>
+            <button type="button" class="mo-tab" data-kind="video">คลิป <i id="moNvd"></i></button>
           </div>
-          <button type="button" class="mo-ico" id="moSort" title="สลับการจัดเรียง">คัดสรร</button>
+          <button type="button" class="mo-ico sort" id="moSort" aria-pressed="true" title="สลับการจัดเรียง"><b>คัดสรร</b><span>ล่าสุด</span></button>
           <button type="button" class="mo-ico find" id="moFind" aria-label="ค้นหาชื่อผู้ฝากภาพ">ค้นชื่อ</button>
         </div>
         <div class="mo-search" id="moSearch" hidden>
@@ -1240,7 +1249,7 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
         Song &amp; Lingling · 12 · 09 · 2026</p></section>
   </div>
 </div>
-<script>var CFG = {"bv": "c7c21c9f4f", "rsvpMode": "sheet", "rsvpEndpoint": "https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec", "lineUrl": "", "email": "hello@example.com", "musicUrl": "assets/music.mp3?v=1785579325", "cardId": "lertnalid-pinyapat", "parallax": 0.045, "dust": false, "touchFx": true, "gateStyle": "film", "title": "Memory: Chapter Two — Lertnalid & Pinyapat", "venue": "Millennium Hilton Bangkok", "startISO": "2026-09-12T17:00:00+07:00", "qrTitle": "Song & Lingling Wedding", "ginfo": "https://admin-production-ce9d.up.railway.app"};</script>
+<script>var CFG = {"bv": "b3d16eb6f7", "rsvpMode": "sheet", "rsvpEndpoint": "https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec", "lineUrl": "", "email": "hello@example.com", "musicUrl": "assets/music.mp3?v=1785579325", "cardId": "lertnalid-pinyapat", "parallax": 0.045, "dust": false, "touchFx": true, "gateStyle": "film", "title": "Memory: Chapter Two — Lertnalid & Pinyapat", "venue": "Millennium Hilton Bangkok", "startISO": "2026-09-12T17:00:00+07:00", "qrTitle": "Song & Lingling Wedding", "ginfo": "https://admin-production-ce9d.up.railway.app"};</script>
 <script>/* ─────────────────────────────────────────────────────────────────────
    Runtime ของการ์ด — ไฟล์เดียวใช้กับทุกการ์ด ไม่มีข้อมูลลูกค้าอยู่ในนี้
    ค่าเฉพาะการ์ดมาจาก window.CFG ที่ตัวเรนเดอร์ฉีดเข้ามา
@@ -2420,13 +2429,19 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
       f.className = 'mo-it' + (mine[it.id] ? ' mine' : '') + (isVid ? ' vid' : '') +
                     (isVid && !it.thumb ? ' noposter' : '') + (wide ? ' wide' : '') +
                     (fresh ? '' : ' in') + ' ph-load';
+      f.__it = it;
       var box = document.createElement('div'); box.className = 'mo-ph';
       if (it.w && it.h) box.style.aspectRatio = it.w + ' / ' + it.h;
       if (!isVid || it.thumb) {
         var im = document.createElement('img');
         im.src = abs(it.thumb || it.url); im.alt = it.cap || '';
         im.loading = 'lazy'; im.decoding = 'async';
-        im.addEventListener('load', function () { f.classList.remove('ph-load'); box.style.aspectRatio = ''; });
+        im.addEventListener('load', function () {
+          f.classList.remove('ph-load');
+          if (!it.w || !it.h) { it.w = im.naturalWidth; it.h = im.naturalHeight; }
+          box.style.aspectRatio = (it.w && it.h) ? (it.w + ' / ' + it.h) : '';
+          spanSoon();
+        });
         im.addEventListener('error', function () { f.classList.remove('ph-load'); });
         box.appendChild(im);
       } else f.classList.remove('ph-load');
@@ -2449,6 +2464,31 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
       if (fresh) requestAnimationFrame(function () { setTimeout(function () { f.classList.add('in'); }, 40); });
       return f;
     }
+    /* กริดเป็นแถว: คำนวณจำนวนแถวย่อย (4px) ที่แต่ละภาพกิน จากสัดส่วนจริง — ลำดับอ่านตรงกับลำดับที่คัดไว้ */
+    var ROWH = 4, ROWGAP = 9;
+    function spanTiles() {
+      var gw = grid.clientWidth || 340;
+      var colW = (gw - ROWGAP) / 2;
+      [].forEach.call(grid.children, function (el) {
+        if (!el.classList || !el.classList.contains('mo-it')) return;
+        var it = el.__it;
+        if (!it) return;
+        var wide = el.classList.contains('wide');
+        var w = it.w || 4, h = it.h || 3;
+        var cw = wide ? gw : colW;
+        var ih = cw * (h / w);
+        var cap = el.querySelector('figcaption');
+        var ch = cap ? cap.offsetHeight : 0;
+        var rows = Math.ceil((ih + ch + ROWGAP) / ROWH);
+        el.style.gridRowEnd = 'span ' + rows;
+      });
+    }
+    var spanTick = null;
+    function spanSoon() {
+      if (spanTick) cancelAnimationFrame(spanTick);
+      spanTick = requestAnimationFrame(function () { spanTick = null; spanTiles(); });
+    }
+    addEventListener('resize', spanSoon, { passive: true });
     /* ภาพเด่น (เต็มความกว้าง) เลือกจากตัวภาพ ไม่ใช่ตำแหน่งอย่างเดียว:
        ติดดาวจากหลังบ้าน > คนถูกใจเยอะ > ไฟล์ใหญ่/แนวนอน · เว้นระยะกันอย่างน้อย 5 ช่อง
        คลิปที่ไม่มีภาพปกไม่ถูกเลือก (จะกลายเป็นกล่องเปล่าเต็มจอ) */
@@ -2503,6 +2543,8 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
       });
       grid.innerHTML = '';
       grid.appendChild(frag);
+      spanTiles();
+      spanSoon();
     }
     var tileRebuild = null;
     function tile(it, top) {
@@ -2632,7 +2674,17 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
     /* ── ตัวกรอง: ทั้งหมด/ภาพ/วิดีโอ · คัดสรร↔ล่าสุด · ค้นชื่อ ── */
     function reload() {
       items = []; have = {}; offset = 0; lastSeen = ''; seenTiles = {};
-      grid.innerHTML = ''; setCount(); load(false);
+      grid.innerHTML = '';
+      moreBtn.hidden = true;
+      countEl.classList.remove('retry'); countEl.onclick = null;
+      countEl.textContent = 'กำลังโหลด… · LOADING';
+      for (var s2 = 0; s2 < 4; s2++) {                 /* กล่องเปล่าไล่แสงระหว่างรอ — ไม่ใช่หน้าว่างเปล่า */
+        var sk = document.createElement('div');
+        sk.className = 'mo-it in ph-load'; sk.style.gridRowEnd = 'span ' + (s2 % 2 ? 46 : 34);
+        var skb = document.createElement('div'); skb.className = 'mo-ph'; sk.appendChild(skb);
+        grid.appendChild(sk);
+      }
+      load(false);
     }
     if (tabsEl) {
       tabsEl.addEventListener('click', function (e) {
@@ -2646,7 +2698,8 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
     }
     if (sortBtn) sortBtn.addEventListener('click', function () {
       ORDER = ORDER === 'smart' ? '' : 'smart';
-      sortBtn.textContent = ORDER === 'smart' ? 'คัดสรร' : 'ล่าสุด';
+      sortBtn.classList.toggle('newest', ORDER !== 'smart');
+      sortBtn.setAttribute('aria-pressed', ORDER === 'smart' ? 'true' : 'false');
       try { sfxTick(); } catch (e2) {}
       reload();
     });
@@ -2699,7 +2752,9 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
         var r = mo.getBoundingClientRect();
         var inView = r.top < innerHeight * 0.75 && r.bottom > innerHeight * 0.25;
         fab.hidden = false;
-        fab.classList.toggle('show', !!(inView && lb.hidden && panel.hidden));
+        var on = !!(inView && lb.hidden && panel.hidden);
+        fab.classList.toggle('show', on);
+        mo.classList.toggle('fab-on', on);
       };
       STGT.addEventListener('scroll', function () {
         if (fabTick) return; fabTick = true;
@@ -3151,6 +3206,7 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
             if (st && st.ok && st.ready && st.url) {
               pendingVids--;
               var it = { id: st.id, kind: 'video', name: name, cap: cap, url: st.url, thumb: st.thumb || '', w: st.w || q.w, h: st.h || q.h, dur: st.dur || q.dur, truncated: !!st.truncated };
+              if (KIND === 'photo') { setCount(); return; }
               if (!have[it.id]) { have[it.id] = 1; items.unshift(it); total++; offset++; tile(it, true); }
               setCount(); vidNote();
               return;
@@ -3199,6 +3255,8 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
               ok++;
               var it = { id: j.id, name: name, cap: cap, url: j.url, thumb: j.thumb, w: q.w, h: q.h };
               remember(j.id);
+              /* กำลังกรองอยู่ (คลิป/ค้นชื่อ) แล้วอัปภาพ — ไม่ยัดลงกริดที่ไม่ตรงเงื่อนไข */
+              if (KIND === 'video' || (QSTR && (name || '').toLowerCase().indexOf(QSTR.toLowerCase()) < 0)) { setCount(); return; }
               if (!have[it.id]) { have[it.id] = 1; items.unshift(it); total++; offset++; tile(it, true); }
               setCount();
             })
@@ -3223,6 +3281,11 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
           err('');
           var inBox2 = panel.querySelector('.mo-in'); if (inBox2) inBox2.hidden = true;
           if (thanks) thanks.hidden = false;
+          var tSub = thanks ? thanks.querySelector('.mo-thanks-s') : null;
+          if (tSub && batch.some(function (q2) { return q2.video; })) {
+            tSub.innerHTML = 'ภาพขึ้นอัลบั้มแล้ว · คลิปกำลังประมวลผล จะขึ้นเองใน 1–2 นาที' +
+              '<i class="en-line">Photos are live — your video is processing and will appear shortly</i>';
+          }
           addBtn.textContent = '＋ แบ่งปันภาพเพิ่ม · SHARE MORE';
         }
       });
