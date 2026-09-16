@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="bv" content="b3d16eb6f7">
+<meta name="bv" content="5500568008">
 <title>Memory: Chapter Two — Lertnalid &amp; Pinyapat</title>
 <meta name="description" content="ขอเรียนเชิญร่วมเป็นเกียรติในพิธีมงคลสมรส Lertnalid &amp; Pinyapat · วันเสาร์ที่ 12 กันยายน 2569 เวลา 17.00 น. · Grand Ballroom, Millennium Hilton Bangkok">
 <meta property="og:type" content="website">
@@ -582,27 +582,25 @@ section.sec-album{padding-bottom:104px}                    /* เว้นที
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.055'/%3E%3C/svg%3E");
   background-size:120px 120px;mix-blend-mode:multiply}
 /* แถบกรอง — ติดขอบบนขณะเลื่อนดูอัลบั้ม */
-.mo-bar{position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:5px;padding:10px 2px 9px;
-  background:var(--paper);border-bottom:1px solid rgba(169,133,79,.28)}
+.mo-bar{position:sticky;top:0;z-index:6;display:flex;align-items:center;justify-content:space-between;gap:4px;
+  padding:8px 44px 7px 2px;background:var(--paper);border-bottom:1px solid rgba(169,133,79,.26)}
 .mo-bar::after{content:"";position:absolute;left:0;right:0;top:100%;height:12px;pointer-events:none;
   background:linear-gradient(180deg,var(--paper),rgba(246,242,234,0))}
-.mo-tabs{display:flex;gap:5px;flex:1 1 auto;min-width:0;overflow-x:auto;scrollbar-width:none;
-  -webkit-mask-image:linear-gradient(90deg,#000 92%,transparent);mask-image:linear-gradient(90deg,#000 92%,transparent)}
-.mo-tabs::-webkit-scrollbar{display:none}
-.mo-tab{flex:0 0 auto;font-family:var(--f-th);font-weight:300;font-size:.7rem;line-height:1;color:var(--ink-soft);
-  padding:13px 14px;min-height:44px;border:1px solid rgba(178,141,87,.35);border-radius:999px;background:none;cursor:pointer;
-  transition:background .3s,color .3s,border-color .3s}
-.mo-tab i{font-style:normal;font-family:var(--f-caps);font-size:.56rem;letter-spacing:.06em;opacity:.75;margin-left:3px}
-.mo-tab.on{background:rgba(191,148,84,.16);border-color:var(--gold);color:#5C4327}
-.mo-ico{flex:0 0 auto;font-family:var(--f-caps);font-size:.58rem;letter-spacing:.14em;color:var(--ink-soft);
-  padding:13px 13px;min-height:44px;min-width:44px;border:1px solid rgba(178,141,87,.3);border-radius:999px;
-  background:none;cursor:pointer;line-height:1}
-.mo-ico.find{font-family:var(--f-th);font-size:.7rem;letter-spacing:0}
-.mo-ico.sort{display:inline-flex;gap:0;padding:0;overflow:hidden;font-family:var(--f-th);letter-spacing:0}
-.mo-ico.sort b,.mo-ico.sort span{font-weight:300;font-size:.66rem;padding:13px 9px;line-height:1;color:var(--ink-soft)}
-.mo-ico.sort b{background:rgba(191,148,84,.16);color:#5C4327}
-.mo-ico.sort.newest b{background:none;color:var(--ink-soft)}
-.mo-ico.sort.newest span{background:rgba(191,148,84,.16);color:#5C4327}
+.mo-tabs{display:flex;gap:14px;flex:0 1 auto;min-width:0;overflow:visible}
+/* แท็บเป็นตัวหนังสือล้วน + ขีดใต้ตัวที่เลือก — เรียบ ไม่ซ้อนกันบนจอแคบ */
+.mo-tab{position:relative;flex:0 0 auto;font-family:var(--f-th);font-weight:300;font-size:.72rem;line-height:1;
+  color:rgba(42,30,22,.45);padding:14px 0 12px;min-height:44px;border:0;background:none;cursor:pointer;
+  transition:color .3s}
+.mo-tab::after{content:"";position:absolute;left:0;right:0;bottom:8px;height:1px;background:var(--gold);
+  transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.22,.61,.36,1)}
+.mo-tab i{font-style:normal;font-family:var(--f-caps);font-size:.52rem;letter-spacing:.04em;opacity:.6;margin-left:3px;
+  vertical-align:.2em}
+.mo-tab.on{color:var(--ink)}
+.mo-tab.on::after{transform:scaleX(1)}
+.mo-ico{flex:0 0 auto;font-family:var(--f-th);font-weight:300;font-size:.68rem;letter-spacing:0;
+  color:rgba(42,30,22,.45);padding:14px 0 12px;min-height:44px;border:0;background:none;cursor:pointer;line-height:1}
+.mo-ico:active{color:var(--ink)}
+.mo-ico.on{color:var(--ink)}
 .mo-ico:active{background:rgba(191,148,84,.14)}
 .mo-search{display:flex;gap:6px;margin:0 2px 8px}
 .mo-search input{flex:1 1 auto;min-width:0;font-family:var(--f-th);font-weight:300;font-size:.8rem;padding:8px 12px;
@@ -1167,7 +1165,6 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
             <button type="button" class="mo-tab" data-kind="photo">ภาพ <i id="moNph"></i></button>
             <button type="button" class="mo-tab" data-kind="video">คลิป <i id="moNvd"></i></button>
           </div>
-          <button type="button" class="mo-ico sort" id="moSort" aria-pressed="true" title="สลับการจัดเรียง"><b>คัดสรร</b><span>ล่าสุด</span></button>
           <button type="button" class="mo-ico find" id="moFind" aria-label="ค้นหาชื่อผู้ฝากภาพ">ค้นชื่อ</button>
         </div>
         <div class="mo-search" id="moSearch" hidden>
@@ -1249,7 +1246,7 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
         Song &amp; Lingling · 12 · 09 · 2026</p></section>
   </div>
 </div>
-<script>var CFG = {"bv": "b3d16eb6f7", "rsvpMode": "sheet", "rsvpEndpoint": "https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec", "lineUrl": "", "email": "hello@example.com", "musicUrl": "assets/music.mp3?v=1785579325", "cardId": "lertnalid-pinyapat", "parallax": 0.045, "dust": false, "touchFx": true, "gateStyle": "film", "title": "Memory: Chapter Two — Lertnalid & Pinyapat", "venue": "Millennium Hilton Bangkok", "startISO": "2026-09-12T17:00:00+07:00", "qrTitle": "Song & Lingling Wedding", "ginfo": "https://admin-production-ce9d.up.railway.app"};</script>
+<script>var CFG = {"bv": "5500568008", "rsvpMode": "sheet", "rsvpEndpoint": "https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec", "lineUrl": "", "email": "hello@example.com", "musicUrl": "assets/music.mp3?v=1785579325", "cardId": "lertnalid-pinyapat", "parallax": 0.045, "dust": false, "touchFx": true, "gateStyle": "film", "title": "Memory: Chapter Two — Lertnalid & Pinyapat", "venue": "Millennium Hilton Bangkok", "startISO": "2026-09-12T17:00:00+07:00", "qrTitle": "Song & Lingling Wedding", "ginfo": "https://admin-production-ce9d.up.railway.app"};</script>
 <script>/* ─────────────────────────────────────────────────────────────────────
    Runtime ของการ์ด — ไฟล์เดียวใช้กับทุกการ์ด ไม่มีข้อมูลลูกค้าอยู่ในนี้
    ค่าเฉพาะการ์ดมาจาก window.CFG ที่ตัวเรนเดอร์ฉีดเข้ามา
@@ -2696,16 +2693,11 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
         reload();
       });
     }
-    if (sortBtn) sortBtn.addEventListener('click', function () {
-      ORDER = ORDER === 'smart' ? '' : 'smart';
-      sortBtn.classList.toggle('newest', ORDER !== 'smart');
-      sortBtn.setAttribute('aria-pressed', ORDER === 'smart' ? 'true' : 'false');
-      try { sfxTick(); } catch (e2) {}
-      reload();
-    });
+
     if (findBtn && searchBox) {
       findBtn.addEventListener('click', function () {
         searchBox.hidden = !searchBox.hidden;
+        findBtn.classList.toggle('on', !searchBox.hidden);
         if (!searchBox.hidden) qEl.focus();
         else if (QSTR) { QSTR = ''; qEl.value = ''; reload(); }
       });
@@ -2719,7 +2711,7 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
         }, 450);
       });
       qxBtn.addEventListener('click', function () {
-        qEl.value = ''; searchBox.hidden = true;
+        qEl.value = ''; searchBox.hidden = true; findBtn.classList.remove('on');
         if (QSTR) { QSTR = ''; reload(); }
       });
     }
