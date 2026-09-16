@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="bv" content="281e1ae13d">
+<meta name="bv" content="0b20892814">
 <title>Memory: Chapter Two — Lertnalid &amp; Pinyapat</title>
 <meta name="description" content="ขอเรียนเชิญร่วมเป็นเกียรติในพิธีมงคลสมรส Lertnalid &amp; Pinyapat · วันเสาร์ที่ 12 กันยายน 2569 เวลา 17.00 น. · Grand Ballroom, Millennium Hilton Bangkok">
 <meta property="og:type" content="website">
@@ -704,6 +704,13 @@ section.sec-album{padding-bottom:104px}                    /* เว้นที
   text-transform:uppercase;margin-top:8px}
 .mo-thanks-s{font-family:var(--f-th);font-weight:300;font-size:.78rem;line-height:1.9;color:var(--ink-soft);margin-top:8px}
 .mo-thanks .btn{margin-top:16px}
+.mo-vis{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.mo-vis-b{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;
+  font-family:var(--f-sc);font-size:.6rem;letter-spacing:.06em;line-height:1.5;color:#8A6A40;text-align:center;
+  border:1px solid rgba(178,141,87,.4);border-radius:12px;background:#FDFBF6;padding:9px 8px;cursor:pointer}
+.mo-vis-b i{font-family:var(--f-caps);font-style:normal;font-size:.44rem;letter-spacing:.14em;color:#B3A58C}
+.mo-vis-b.on{border-color:var(--gold);background:rgba(178,141,87,.12);color:#5C4327}
+.mo-vis-b.on i{color:#8A6A40}
 .mo-prev{display:none;grid-template-columns:repeat(4,1fr);gap:8px;padding:0}
 .mo-prev.on{display:grid}
 .mo-prev img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:9px;display:block}
@@ -1120,7 +1127,7 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
       <p class="mo-script reveal d2">Song &amp; LingLing</p>
       <p class="th reveal d2" style="font-size:var(--s2);margin-top:8px;max-width:330px">ภาพและคลิปจากทุกคนที่มาร่วมวันของเรา — แตะเพื่อดูเต็มจอ<br><i class="en-line">Every moment our guests captured, all in one place</i></p>
       <p class="mo-meta reveal d2" id="moMeta"></p>
-      <div class="mo reveal d3" id="mo" data-max="5" data-video="1" data-vsec="60">
+      <div class="mo reveal d3" id="mo" data-max="20" data-video="1" data-vsec="300" data-vmax="400">
         <div class="mo-bar" id="moBar">
           <div class="mo-tabs" id="moTabs">
             <button type="button" class="mo-tab on" data-kind="">ทั้งหมด <i id="moNall"></i></button>
@@ -1148,9 +1155,17 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
             <label class="mo-pick" id="moPick">
               <input type="file" id="moFile" accept="image/*,video/*" multiple hidden>
               <span id="moPickTxt">แตะเพื่อเลือกภาพหรือวิดีโอ · ADD PHOTOS OR VIDEOS</span>
-              <i class="mo-pick-sub">ครั้งละไม่เกิน 5 ไฟล์ · คลิปยาวไม่เกิน 60 วินาที</i>
+              <i class="mo-pick-sub">ครั้งละไม่เกิน 20 ไฟล์ · ภาพจากมือถือส่งได้ทุกขนาด · คลิปยาวได้ถึง 5 นาที</i>
             </label>
             <div class="mo-prev" id="moPrev" aria-live="polite"></div>
+            <div class="mo-vis" id="moVis" role="group" aria-label="ใครเห็นภาพนี้ได้">
+              <button type="button" class="mo-vis-b on" data-vis="pub">
+                ลงอัลบั้มให้ทุกคนเห็น<i>EVERYONE ON THE CARD</i>
+              </button>
+              <button type="button" class="mo-vis-b" data-vis="priv">
+                ส่งถึงบ่าวสาวเท่านั้น<i>PRIVATE · ONLY SONG &amp; LING</i>
+              </button>
+            </div>
             <input id="moName" maxlength="60" autocomplete="name" placeholder="ชื่อของคุณ · Your name">
             <input id="moCap" maxlength="120" placeholder="ข้อความถึงบ่าวสาว (ไม่บังคับ) · Message, optional">
             <p class="gf-err" id="moErr" hidden></p>
@@ -1196,7 +1211,7 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
         Song &amp; Lingling · 12 · 09 · 2026</p></section>
   </div>
 </div>
-<script>var CFG = {"bv": "281e1ae13d", "rsvpMode": "sheet", "rsvpEndpoint": "https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec", "lineUrl": "", "email": "hello@example.com", "musicUrl": "assets/music.mp3?v=1785579325", "cardId": "lertnalid-pinyapat", "parallax": 0.045, "dust": false, "touchFx": true, "gateStyle": "film", "title": "Memory: Chapter Two — Lertnalid & Pinyapat", "venue": "Millennium Hilton Bangkok", "startISO": "2026-09-12T17:00:00+07:00", "qrTitle": "Song & Lingling Wedding", "ginfo": "https://admin-production-ce9d.up.railway.app"};</script>
+<script>var CFG = {"bv": "0b20892814", "rsvpMode": "sheet", "rsvpEndpoint": "https://script.google.com/macros/s/AKfycbw4jHiuaTHZXed987vl1f0U-2tcgH1CGjMBYNhadc36vJ9qCECUdlqxk5TmAiMovqFu/exec", "lineUrl": "", "email": "hello@example.com", "musicUrl": "assets/music.mp3?v=1785579325", "cardId": "lertnalid-pinyapat", "parallax": 0.045, "dust": false, "touchFx": true, "gateStyle": "film", "title": "Memory: Chapter Two — Lertnalid & Pinyapat", "venue": "Millennium Hilton Bangkok", "startISO": "2026-09-12T17:00:00+07:00", "qrTitle": "Song & Lingling Wedding", "ginfo": "https://admin-production-ce9d.up.railway.app"};</script>
 <script>/* ─────────────────────────────────────────────────────────────────────
    Runtime ของการ์ด — ไฟล์เดียวใช้กับทุกการ์ด ไม่มีข้อมูลลูกค้าอยู่ในนี้
    ค่าเฉพาะการ์ดมาจาก window.CFG ที่ตัวเรนเดอร์ฉีดเข้ามา
@@ -2305,9 +2320,9 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
     var SETQ = SET ? '&set=' + encodeURIComponent(SET) : '';
     var mo = document.getElementById(P);
     if (!mo || !CFG.ginfo) return;
-    var MAXF = parseInt(mo.dataset.max, 10) || 5;
-    var ALLOWVID = mo.dataset.video === '1', MAXSEC = parseInt(mo.dataset.vsec, 10) || 60;
-    var MAXVBYTES = 100 * 1024 * 1024;
+    var MAXF = parseInt(mo.dataset.max, 10) || 20;
+    var ALLOWVID = mo.dataset.video === '1', MAXSEC = parseInt(mo.dataset.vsec, 10) || 300;
+    var MAXVMB = parseInt(mo.dataset.vmax, 10) || 400, MAXVBYTES = MAXVMB * 1024 * 1024;
     var API = CFG.ginfo, CID = CFG.cardId || '';
     var addBtn = document.getElementById(P + 'Add'), panel = document.getElementById(P + 'Panel'),
         fileEl = document.getElementById(P + 'File'), pick = document.getElementById(P + 'Pick'),
@@ -2328,6 +2343,7 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
         lbVid = document.getElementById(P + 'LbVid'),
         lbName = document.getElementById(P + 'LbName'), lbCap = document.getElementById(P + 'LbCap'),
         lbDl = document.getElementById(P + 'LbDl'), lbX = document.getElementById(P + 'LbX');
+    function fmtLim(sec) { return sec % 60 === 0 ? (sec / 60) + ' นาที' : sec + ' วินาที'; }
     var PAGE = opt.page || 18, items = [], have = {}, total = 0, offset = 0, loading = false, cur = null;
     var KIND = '', ORDER = opt.append ? '' : 'smart', QSTR = '', STATS = null, pendingReload = false;
     var SEED = (function () { try { var k = sessionStorage.getItem('sl_seed'); if (!k) { k = Math.random().toString(36).slice(2, 8); sessionStorage.setItem('sl_seed', k); } return k; } catch (e) { return 'a1b2c3'; } })();
@@ -2356,10 +2372,6 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
       return Math.floor(d / 60) + ':' + ('0' + (d % 60)).slice(-2);
     }
     /* ── กริดแบบวารสาร: สองคอลัมน์ รักษาสัดส่วนภาพเดิม · ภาพเด่นกินเต็มความกว้างเป็นจังหวะ ── */
-    function fmtDur(d) {
-      d = Math.round(d || 0); if (!d) return '';
-      return Math.floor(d / 60) + ':' + ('0' + (d % 60)).slice(-2);
-    }
     var seenTiles = {};
     function orient(it) {
       if (!it.w || !it.h) return 's';
@@ -2976,17 +2988,17 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
       files.forEach(function (f) {
         chain = chain.then(function () {
           if (isVideoFile(f) && !isImageFile(f)) {
-            if (f.size > MAXVBYTES) { skipped.push('วิดีโอใหญ่เกิน 100MB'); return; }
+            if (f.size > MAXVBYTES) { skipped.push('วิดีโอใหญ่เกิน ' + MAXVMB + 'MB'); return; }
             return probeVideo(f).then(function (o) {
-              if (o.dur && o.dur > MAXSEC + 1) { skipped.push('คลิปยาวเกิน ' + MAXSEC + ' วิ (' + Math.round(o.dur) + ' วิ)'); return; }
-              if (!o.dur) skipped.push('ตรวจความยาวคลิปในเครื่องไม่ได้ — ถ้ายาวเกิน ' + MAXSEC + ' วิ ระบบจะตัดให้');
+              if (o.dur && o.dur > MAXSEC + 1) { skipped.push('คลิปยาวเกิน ' + fmtLim(MAXSEC) + ' (' + fmtDur(o.dur) + ')'); return; }
+              if (!o.dur) skipped.push('ตรวจความยาวคลิปในเครื่องไม่ได้ — ถ้ายาวเกิน ' + fmtLim(MAXSEC) + ' ระบบจะตัดให้');
               queue.push({ video: f, thumb: o.thumb, dur: o.dur, w: o.w, h: o.h });
               renderPrev();
             });
           }
           return loadImg(f).then(function (o) {
-            var full = shrink(o.img, 1600, 0.86);
-            var th = shrink(o.img, 480, 0.8);
+            var full = shrink(o.img, 2560, 0.88);       /* เก็บละเอียดสุดเท่าที่เครื่องแขกย่อไหว */
+            var th = shrink(o.img, 640, 0.8);
             URL.revokeObjectURL(o.url);
             queue.push({ full: full.data, thumb: th.data, w: full.w, h: full.h });
             renderPrev();
@@ -2999,6 +3011,21 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
         if (skipped.length) err(skipped.join(' · '));
       });
     });
+    /* ── โหมดของภาพที่ส่ง: ขึ้นการ์ดให้ทุกคนเห็น หรือ ส่งถึงบ่าวสาวเท่านั้น ── */
+    var VIS = 'pub';
+    var thanksT0 = thanks ? thanks.querySelector('.mo-thanks-t') : null;
+    var thanksS0 = thanks ? thanks.querySelector('.mo-thanks-s') : null;
+    var THANKS_T = thanksT0 ? thanksT0.textContent : '', THANKS_S = thanksS0 ? thanksS0.innerHTML : '';
+    var visBox = document.getElementById(P + 'Vis');
+    if (visBox) {
+      visBox.addEventListener('click', function (e) {
+        var b = e.target.closest ? e.target.closest('.mo-vis-b') : null;
+        if (!b || sending) return;
+        VIS = b.dataset.vis === 'priv' ? 'priv' : 'pub';
+        [].forEach.call(visBox.querySelectorAll('.mo-vis-b'), function (x) { x.classList.toggle('on', x === b); });
+        err('');
+      });
+    }
     var PICK_DEFAULT = pickTxt.textContent;
     /* พรีวิวไฟล์ที่เลือก — สร้างช่องทีละใบแล้วเก็บไว้ ไม่สร้างใหม่ทั้งแถบทุกครั้ง
        (สร้างใหม่ทั้งแถบ = รูปกะพริบ ปุ่ม ✕ ขยับหนีนิ้ว) · ลบด้วยตัวอ้างอิงไฟล์ ไม่ใช่ลำดับ */
@@ -3059,7 +3086,8 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
         var f = q.video;
         var url = API + '/api/momentvid?cardId=' + encodeURIComponent(CID) + '&name=' + encodeURIComponent(name) +
                   '&cap=' + encodeURIComponent(cap) + '&type=' + encodeURIComponent(f.type || 'video/mp4') +
-                  '&dur=' + encodeURIComponent(q.dur || 0) + '&code=' + encodeURIComponent(CODE || '');
+                  '&dur=' + encodeURIComponent(q.dur || 0) + '&code=' + encodeURIComponent(CODE || '') +
+                  '&vis=' + encodeURIComponent(VIS);
         var x = new XMLHttpRequest();
         x.open('POST', url, true);
         x.timeout = 10 * 60 * 1000;
@@ -3119,6 +3147,7 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
       err('');
       try { localStorage.setItem('sl_name', name); } catch (e6) {}
       sendBtn.disabled = true; addBtn.disabled = true; sending = true;
+      var priv = VIS === 'priv';
       var batch = queue.slice(), n = batch.length, ok = 0, fail = 0, failed = [];
       var run = Promise.resolve();
       batch.forEach(function (q, i) {
@@ -3129,19 +3158,19 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
               sendBtn.textContent = 'กำลังส่งวิดีโอ ' + (i + 1) + '/' + n + ' · ' + Math.round(pct * 100) + '%';
             }).then(function (j) {
               ok++; remember(j.id);
-              watchVideo(j, name, cap, q);
+              if (!priv) watchVideo(j, name, cap, q);
             }).catch(function (e) {
               fail++; failed.push(q);
               if (e && e.message && !/^(network|timeout|http \d+)$/.test(e.message)) err(e.message);
             });
           }
-          return postOne({ cardId: CID, name: name, cap: cap, photo: q.full, thumb: q.thumb, w: q.w, h: q.h, code: CODE || '' })
+          return postOne({ cardId: CID, name: name, cap: cap, photo: q.full, thumb: q.thumb, w: q.w, h: q.h, code: CODE || '', vis: VIS })
             .then(function (j) {
               ok++;
               var it = { id: j.id, name: name, cap: cap, url: j.url, thumb: j.thumb, w: q.w, h: q.h };
               remember(j.id);
-              /* กำลังกรองอยู่ (คลิป/ค้นชื่อ) แล้วอัปภาพ — ไม่ยัดลงกริดที่ไม่ตรงเงื่อนไข */
-              if (KIND === 'video' || (QSTR && (name || '').toLowerCase().indexOf(QSTR.toLowerCase()) < 0)) { setCount(); return; }
+              /* ส่วนตัว = ไม่ขึ้นการ์ด (บ่าวสาวดูในระบบหลังบ้าน) · กำลังกรองอยู่ก็ไม่ยัดลงกริดที่ไม่ตรงเงื่อนไข */
+              if (priv || KIND === 'video' || (QSTR && (name || '').toLowerCase().indexOf(QSTR.toLowerCase()) < 0)) { setCount(); return; }
               if (!have[it.id]) { have[it.id] = 1; items.unshift(it); total++; offset++; tile(it, true); }
               setCount();
             })
@@ -3167,7 +3196,15 @@ Seating is being arranged — please ask at the registration desk" data-qrnote="
           var inBox2 = panel.querySelector('.mo-in'); if (inBox2) inBox2.hidden = true;
           if (thanks) thanks.hidden = false;
           var tSub = thanks ? thanks.querySelector('.mo-thanks-s') : null;
-          if (tSub && batch.some(function (q2) { return q2.video; })) {
+          var tTit = thanks ? thanks.querySelector('.mo-thanks-t') : null;
+          var hasVid = batch.some(function (q2) { return q2.video; });
+          if (tTit && THANKS_T) tTit.textContent = THANKS_T;      /* ส่งรอบก่อนอาจเปลี่ยนคำไว้ — คืนค่าเดิมก่อนเสมอ */
+          if (tSub && THANKS_S) tSub.innerHTML = THANKS_S;
+          if (priv) {
+            if (tTit) tTit.textContent = 'SENT TO SONG & LING.';
+            if (tSub) tSub.innerHTML = 'ส่งถึงบ่าวสาวเรียบร้อย — ไฟล์นี้จะไม่ขึ้นในอัลบั้มหน้าการ์ด' +
+              '<i class="en-line">Delivered privately — only Song &amp; Ling can see it</i>';
+          } else if (tSub && hasVid) {
             tSub.innerHTML = 'ภาพขึ้นอัลบั้มแล้ว · คลิปกำลังประมวลผล จะขึ้นเองใน 1–2 นาที' +
               '<i class="en-line">Photos are live — your video is processing and will appear shortly</i>';
           }
